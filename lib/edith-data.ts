@@ -58,33 +58,59 @@ export const initialLogs: AccessLogEntry[] = [
 
 export const liveResources = ["Contacts", "Drive Files", "Contacts", "Drive Files", "Contacts"]
 
-export const recommendations = [
+export type RecommendationPriority = "high" | "medium" | "info"
+
+export interface Recommendation {
+  id: string
+  priority: RecommendationPriority
+  title: string
+  app: string
+  detail: string
+  evidence: string
+  actionLabel: string
+  successTitle: string
+  successDetail: string
+  fixable: boolean
+}
+
+export const backgroundLocationApps = ["Weather Now", "Fitness Pal", "Ride Share", "Photo Vault"]
+
+export const recommendations: Recommendation[] = [
   {
-    id: "r1",
-    severity: "critical" as const,
-    title: "Revoke Resume Builder access to Contacts and Drive Files",
-    detail:
-      "The app escalated from limited access to 3,050 requests/hr. Its trust score fell from 92 to 34 within minutes.",
+    id: "unused-microphone",
+    priority: "high",
+    title: "Unused Permissions Detected",
+    app: "Budget Tracker",
+    detail: "'Budget Tracker' has access to 'Microphone' but hasn't used it in 90 days.",
+    evidence: "Last microphone request: Aug 11, 2026",
+    actionLabel: "Revoke Microphone",
+    successTitle: "Microphone access revoked",
+    successDetail: "Budget Tracker can no longer use your microphone.",
+    fixable: true,
   },
   {
-    id: "r2",
-    severity: "medium" as const,
-    title: "Review Budget Tracker's Bank Logs permission",
-    detail:
-      "Highly sensitive scope. Consider restricting it to read-only transaction summaries instead of full logs.",
+    id: "over-privileged",
+    priority: "medium",
+    title: "Over-privileged App",
+    app: "Pixel Game",
+    detail: "'Pixel Game' has 'Full Network Access'. We recommend downgrading it to 'Local Network Only'.",
+    evidence: "Only local network traffic observed in the last 30 days",
+    actionLabel: "Downgrade Access",
+    successTitle: "Access downgraded",
+    successDetail: "Pixel Game is now limited to Local Network Only.",
+    fixable: true,
   },
   {
-    id: "r3",
-    severity: "low" as const,
-    title: "Enable automatic suspension on request spikes",
-    detail:
-      "Apps exceeding 10x their baseline request rate can be suspended automatically until you approve them.",
-  },
-  {
-    id: "r4",
-    severity: "low" as const,
-    title: "Rotate access tokens older than 90 days",
-    detail: "Two connected apps are using tokens issued more than 90 days ago.",
+    id: "background-location",
+    priority: "info",
+    title: "Background Tracking",
+    app: "4 apps",
+    detail: "4 apps are requesting location data in the background.",
+    evidence: backgroundLocationApps.join(", "),
+    actionLabel: "Review Location Permissions",
+    successTitle: "Location permissions reviewed",
+    successDetail: "Background location requests were marked as reviewed.",
+    fixable: false,
   },
 ]
 

@@ -99,13 +99,20 @@ export function AppShell() {
     })
   }
 
-  const handleApplyRecommendation = (id: string, title: string) => {
-    if (id === "r1" && threat !== "revoked") {
-      handleRevoke()
-    } else {
-      toast.success("Recommendation applied", { description: title })
-    }
-    setDismissed((prev) => [...prev, id])
+  const handleApplyRecommendation = (id: string) => {
+    const rec = recommendations.find((r) => r.id === id)
+    if (!rec) return
+    toast.success(rec.successTitle, { description: rec.successDetail })
+    setDismissed((prev) => (prev.includes(id) ? prev : [...prev, id]))
+  }
+
+  const handleApplyAllRecommendations = () => {
+    const fixes = recommendations.filter((r) => r.fixable && !dismissed.includes(r.id))
+    if (fixes.length === 0) return
+    setDismissed((prev) => [...prev, ...fixes.map((r) => r.id)])
+    toast.success("All recommended fixes applied", {
+      description: `${fixes.length} permission change${fixes.length === 1 ? "" : "s"} applied across your apps.`,
+    })
   }
 
   const handleNavigate = (next: ViewId) => {
@@ -177,12 +184,14 @@ export function AppShell() {
             <AppInvestigation app={investigatedApp} onBack={() => setInvestigatingId(null)} />
           ) : (
             <>
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">{viewTitles[view]}</h1>
-            <p className="text-sm text-muted-foreground">
-              Enhanced Digital Identity, Trust &amp; Heuristics
-            </p>
-          </div>
+          {view !== "recommendations" && (
+            <div>
+              <h1 className="text-2xl font-semibold tracking-tight">{viewTitles[view]}</h1>
+              <p className="text-sm text-muted-foreground">
+                Enhanced Digital Identity, Trust &amp; Heuristics
+              </p>
+            </div>
+          )}
 
           {view === "dashboard" && (
             <>
@@ -200,7 +209,11 @@ export function AppShell() {
           )}
 
           {view === "recommendations" && (
-            <RecommendationsView dismissed={dismissed} onApply={handleApplyRecommendation} />
+            <RecommendationsView
+              dismissed={dismissed}
+              onApply={handleApplyRecommendation}
+              onApplyAll={handleApplyAllRecommendations}
+            />
           )}
 
           {view === "settings" && <SettingsView />}
