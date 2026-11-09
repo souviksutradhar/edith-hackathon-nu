@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { useMemo, useState } from "react"
-import { TrendingUp } from "lucide-react"
+import { useEffect, useMemo, useState } from "react"
+import { AlertTriangle, Download, Loader2, Lock, ShieldAlert, ShieldCheck, ShieldOff, Sparkles, TrendingUp, Undo2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -45,54 +45,163 @@ function TrustBar({ score }: { score: number }) {
 }
 
 interface AppsTableProps {
-  apps: ConnectedApp[]
-  query: string
-  onManage: (app: ConnectedApp) => void
+  apps?: ConnectedApp[]
+  query?: string
+  onManage?: (app: ConnectedApp) => void
+  onModify?: (app: ConnectedApp) => void
+  onQuarantine?: (app: ConnectedApp) => void
+  onRestore?: (app: ConnectedApp) => void
+  onSimulateAttack?: (appId?: string | number) => void
+  onTriggerHack?: () => void
+  isSimulating?: boolean
   title?: string
 }
 
-export function AppsTable({ apps, query, onManage, title = "Connected Applications Monitoring" }: AppsTableProps) {
+export function AppsTable({
+  apps: propApps,
+  query = "",
+  onManage = () => {},
+  onModify,
+  onQuarantine,
+  onRestore,
+  onSimulateAttack,
+  onTriggerHack,
+  isSimulating = false,
+  title = "Connected Applications & Permissions Audit",
+}: AppsTableProps = {}) {
+  const [apps, setApps] = useState<ConnectedApp[]>([])
   const [filter, setFilter] = useState<Filter>("all")
+  const [selectedAppId, setSelectedAppId] = useState<string | number>(3)
+  const [internalLoading, setInternalLoading] = useState(false)
+
+  // Fetch initial data if not passed by parent
+  useEffect(() => {
+    fetch("http://localhost:5000/api/apps")
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) setApps(data)
+      })
+      .catch((err) => console.error("Error fetching apps:", err))
+  }, [])
+
+  // Sync if propApps changes
+  useEffect(() => {
+    if (propApps && Array.isArray(propApps)) {
+      setApps(propApps)
+    }
+  }, [propApps])
+
+  const effectiveApps = apps.length > 0 ? apps : (propApps || [])
+
+  // Trigger attack simulation
+  const handleTriggerAttack = async () => {
+    if (onSimulateAttack) {
+      onSimulateAttack(selectedAppId)
+      return
+    }
+    if (onTriggerHack) {
+      onTriggerHack()
+      return
+    }
+
+    try {
+      setInternalLoading(true)
+      const response = await fetch("http://localhost:5000/api/simulate-attack", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ appId: selectedAppId }),
+      })
+      const result = await response.json()
+      if (result.updated_apps) {
+        setApps(result.updated_apps)
+      }
+    } catch (error) {
+      console.error("Error triggering attack:", error)
+    } finally {
+      setInternalLoading(false)
+    }
+  }
+
+  // Quarantine action
+  const handleQuarantine = async (app: ConnectedApp) => {
+    if (onQuarantine) {
+      onQuarantine(app)
+      return
+    }
+    try {
+      const res = await fetch(`http://localhost:5000/api/apps/${app.id}/quarantine`, {
+        method: "POST",
+      })
+      const data = await res.json()
+      if (data.updated_apps) setApps(data.updated_apps)
+    } catch (err) {
+      console.error("Failed to quarantine app:", err)
+    }
+  }
+
+  // Restore action
+  const handleRestore = async (app: ConnectedApp) => {
+    if (onRestore) {
+      onRestore(app)
+      return
+    }
+    try {
+      const res = await fetch(`http://localhost:5000/api/apps/${app.id}/restore`, {
+        method: "POST",
+      })
+      const data = await res.json()
+      if (data.updated_apps) setApps(data.updated_apps)
+    } catch (err) {
+      console.error("Failed to restore app:", err)
+    }
+  }
 
   const visible = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return apps.filter((app) => {
+    return effectiveApps.filter((app) => {
+      const score = app.trustScore ?? 100
       const matchesFilter =
         filter === "all" ||
-        (filter === "attention" ? app.trustScore < 70 : app.trustScore >= 70)
+        (filter === "attention" ? score < 70 : score >= 70)
       const matchesQuery =
         !q ||
-        app.name.toLowerCase().includes(q) ||
-        app.permissions.some((p) => p.toLowerCase().includes(q))
+        app.name?.toLowerCase().includes(q) ||
+        app.declaredPurpose?.toLowerCase().includes(q) ||
+        (app.permissions && app.permissions.some((p) => p.toLowerCase().includes(q)))
       return matchesFilter && matchesQuery
     })
-  }, [apps, filter, query])
+  }, [effectiveApps, filter, query])
+
+  const isBusy = isSimulating || internalLoading
 
   return (
-    <Card className="border border-border bg-card">
+    <Card className="border border-border bg-card shadow-lg">
       <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <CardTitle className="text-base">{title}</CardTitle>
-          <CardDescription>Permissions, request volume and behavioral trust per app.</CardDescription>
+          <CardDescription>
+            Intent-Based Heuristic Evaluation: Declared Purpose vs Actual Permissions Granted &amp; Sideload Origins.
+          </CardDescription>
         </div>
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="attention">Needs attention</TabsTrigger>
-            <TabsTrigger value="healthy">Healthy</TabsTrigger>
+            <TabsTrigger value="all">All ({effectiveApps.length})</TabsTrigger>
+            <TabsTrigger value="attention">Needs Attention</TabsTrigger>
+            <TabsTrigger value="healthy">Healthy Baseline</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
       <CardContent>
+        {/* Apps Table */}
         <Table>
           <TableHeader>
             <TableRow className="hover:bg-transparent">
-              <TableHead>App Name</TableHead>
-              <TableHead>Permissions Granted</TableHead>
-              <TableHead>API Requests/Hr</TableHead>
+              <TableHead>Application &amp; Source</TableHead>
+              <TableHead>Declared Purpose</TableHead>
+              <TableHead>Expected vs Granted Permissions</TableHead>
               <TableHead>Trust Score</TableHead>
               <TableHead className="text-right">
-                <span className="sr-only">Actions</span>
+                <span>Zero-Trust Action</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -104,72 +213,148 @@ export function AppsTable({ apps, query, onManage, title = "Connected Applicatio
                 </TableCell>
               </TableRow>
             )}
-            {visible.map((app) => (
-              <TableRow
-                key={app.id}
-                className={cn(
-                  "transition-colors hover:bg-accent/50",
-                  app.trustScore < 50 && "bg-danger/5 hover:bg-danger/10",
-                )}
-              >
-                <TableCell>
-                  <div className="flex items-center gap-2 font-medium">
-                    {app.name}
-                    {app.status === "suspended" && (
-                      <Badge variant="outline" className="border-warning/40 text-warning">
-                        Suspended
-                      </Badge>
-                    )}
-                    {app.status === "revoked" && (
-                      <Badge variant="outline" className="border-danger/40 text-danger">
-                        Revoked
-                      </Badge>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1.5">
-                    {app.permissions.length === 0 ? (
-                      <span className="text-xs text-muted-foreground">None</span>
-                    ) : (
-                      app.permissions.map((perm) => (
-                        <Badge
-                          key={perm}
-                          variant="secondary"
-                          className="border border-border bg-muted/60 font-normal text-foreground/80"
+            {visible.map((app) => {
+              const isFrozen = app.status === "Frozen" || app.status?.toLowerCase() === "frozen"
+              const isWarning = app.status === "Warning" || (app.trustScore < 70 && !isFrozen)
+              const isSideloaded = app.installSource?.toLowerCase().includes("sideload")
+
+              // Detect Intent Mismatch: Granted permissions not in Expected permissions
+              const expectedSet = new Set(app.expectedPermissions || [])
+              const actualPermissions = app.grantedPermissions || app.permissions || []
+
+              return (
+                <TableRow
+                  key={app.id}
+                  className={cn(
+                    "transition-colors hover:bg-accent/50",
+                    isFrozen && "bg-danger/10 hover:bg-danger/15",
+                    isWarning && "bg-warning/10 hover:bg-warning/15",
+                  )}
+                >
+                  {/* Application & Source */}
+                  <TableCell>
+                    <div>
+                      <div className="flex items-center gap-2 font-medium text-foreground">
+                        <span>{app.name}</span>
+                        {isFrozen && (
+                          <Badge className="border-danger text-danger bg-danger/15 font-mono text-[10px] uppercase font-bold">
+                            <Lock className="size-2.5 mr-1" />
+                            Frozen
+                          </Badge>
+                        )}
+                        {isWarning && (
+                          <Badge className="border-warning text-warning bg-warning/15 font-mono text-[10px] uppercase font-bold">
+                            Warning
+                          </Badge>
+                        )}
+                        {app.status === "Active" && (
+                          <Badge className="border-success/40 text-success bg-success/10 font-mono text-[10px] uppercase">
+                            Active
+                          </Badge>
+                        )}
+                      </div>
+
+                      <div className="mt-1 flex items-center gap-2 text-xs">
+                        {isSideloaded ? (
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-danger">
+                            <ShieldAlert className="size-3" />
+                            {app.installSource || "WhatsApp Sideload"}
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
+                            <ShieldCheck className="size-3 text-success" />
+                            {app.installSource || "Play Store"}
+                          </span>
+                        )}
+                        {app.packageName && (
+                          <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
+                            &middot; {app.packageName}
+                          </span>
+                        )}
+                      </div>
+
+                      {app.alert && (
+                        <p className="mt-1.5 flex items-center gap-1 text-[11px] text-danger font-medium line-clamp-1">
+                          <AlertTriangle className="size-3 shrink-0" />
+                          {app.alert}
+                        </p>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* Declared Purpose */}
+                  <TableCell>
+                    <span className="text-xs font-medium text-foreground/90">
+                      {app.declaredPurpose || "Standard Mobile Utility"}
+                    </span>
+                  </TableCell>
+
+                  {/* Expected vs Granted (Intent Mismatch Inspection) */}
+                  <TableCell>
+                    <div className="space-y-1.5 max-w-xs">
+                      <div className="flex flex-wrap gap-1">
+                        {actualPermissions.length === 0 ? (
+                          <span className="text-xs text-danger font-mono font-medium">All Permissions Revoked</span>
+                        ) : (
+                          actualPermissions.map((perm) => {
+                            const isMismatch = !expectedSet.has(perm) && isSideloaded
+                            return (
+                              <Badge
+                                key={perm}
+                                variant={isMismatch ? "destructive" : "secondary"}
+                                className={cn(
+                                  "text-[11px] font-normal",
+                                  isMismatch
+                                    ? "bg-danger text-white font-semibold ring-1 ring-danger animate-pulse"
+                                    : "border border-border bg-muted/60 text-foreground/80"
+                                )}
+                              >
+                                {isMismatch ? `⚠ Mismatch: ${perm}` : perm}
+                              </Badge>
+                            )
+                          })
+                        )}
+                      </div>
+                    </div>
+                  </TableCell>
+
+                  {/* Trust Score */}
+                  <TableCell>
+                    <TrustBar score={app.trustScore ?? 0} />
+                  </TableCell>
+
+                  {/* Zero-Trust Action Buttons */}
+                  <TableCell className="text-right">
+                    <div className="flex justify-end items-center gap-2">
+                      {isFrozen ? (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleRestore(app)}
+                          className="border-success/40 text-success hover:bg-success/15 font-semibold text-xs"
                         >
-                          {perm}
-                        </Badge>
-                      ))
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1.5 tabular-nums",
-                      app.spike && "font-semibold text-danger",
-                    )}
-                  >
-                    {app.requestsPerHour.toLocaleString("en-US")}/hr
-                    {app.spike && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-danger/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase">
-                        <TrendingUp className="size-3" aria-hidden="true" />
-                        Spike
-                      </span>
-                    )}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <TrustBar score={app.trustScore} />
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button variant="outline" size="sm" onClick={() => onManage(app)}>
-                    Manage
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                          <Undo2 className="size-3.5 mr-1" />
+                          Restore
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleQuarantine(app)}
+                          className="border-danger/40 text-danger hover:bg-danger/15 font-semibold text-xs"
+                        >
+                          <ShieldOff className="size-3.5 mr-1" />
+                          Revoke / Freeze
+                        </Button>
+                      )}
+                      <Button variant="outline" size="sm" onClick={() => onManage(app)} className="text-xs">
+                        Details
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </CardContent>

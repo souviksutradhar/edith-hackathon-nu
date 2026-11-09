@@ -1,84 +1,104 @@
-"use client"
+"use client";
 
-import { Bell, Menu, Search } from "lucide-react"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { useEffect, useState } from "react";
+import { ShieldCheck, Clock, Radio, Menu } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
-  query: string
-  onQueryChange: (value: string) => void
-  notificationCount: number
-  onNotificationsClick: () => void
-  onMenuClick: () => void
+  onMenuClick?: () => void;
+  isSseConnected?: boolean;
 }
 
-export function Header({
-  query,
-  onQueryChange,
-  notificationCount,
-  onNotificationsClick,
-  onMenuClick,
-}: HeaderProps) {
+export function Header({ onMenuClick, isSseConnected = true }: HeaderProps) {
+  const [timeStr, setTimeStr] = useState({ ist: "", utc: "" });
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      const ist = now.toLocaleTimeString("en-GB", {
+        timeZone: "Asia/Kolkata",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      const utc = now.toLocaleTimeString("en-GB", {
+        timeZone: "UTC",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+      setTimeStr({ ist, utc });
+    };
+
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur md:px-6">
-      <Button
-        variant="ghost"
-        size="icon"
-        className="lg:hidden"
-        onClick={onMenuClick}
-        aria-label="Open navigation"
-      >
-        <Menu className="size-5" />
-      </Button>
+    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 backdrop-blur-md md:px-6">
+      {/* Left: Logo & System Status */}
+      <div className="flex items-center gap-3">
+        {onMenuClick && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden h-8 w-8 text-zinc-400 hover:text-zinc-100"
+            onClick={onMenuClick}
+            aria-label="Open menu"
+          >
+            <Menu className="size-4" />
+          </Button>
+        )}
 
-      <div className="relative w-full max-w-md">
-        <Search
-          className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
-          aria-hidden="true"
-        />
-        <Input
-          type="search"
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
-          placeholder="Search apps, permissions, logs..."
-          aria-label="Search apps, permissions, logs"
-          className="h-9 border-border bg-card pl-9"
-        />
-      </div>
+        <div className="flex items-center gap-2.5">
+          <span className="font-mono text-base font-extrabold tracking-widest text-zinc-100">
+            E.D.I.T.H.
+          </span>
+          <Badge
+            variant="outline"
+            className="border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-400 font-semibold px-2 py-0.5 rounded"
+          >
+            DEFENSE SOC v2.4
+          </Badge>
 
-      <div className="ml-auto flex items-center gap-2 sm:gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          onClick={onNotificationsClick}
-          aria-label={
-            notificationCount > 0
-              ? `Notifications, ${notificationCount} unread`
-              : "Notifications"
-          }
-        >
-          <Bell className="size-5" />
-          {notificationCount > 0 && (
-            <span className="absolute right-1 top-1 flex size-4 items-center justify-center rounded-full bg-danger text-[10px] font-bold text-white ring-2 ring-background">
-              {notificationCount}
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-zinc-800 bg-zinc-900/80 text-[11px] font-mono text-zinc-300">
+            <span
+              className={`size-1.5 rounded-full ${
+                isSseConnected ? "bg-emerald-400" : "bg-amber-400"
+              }`}
+            />
+            <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
+              {isSseConnected ? "SYSTEM ACTIVE" : "CONNECTING..."}
             </span>
-          )}
-        </Button>
-
-        <div className="flex items-center gap-3 rounded-lg border border-border bg-card py-1 pl-1 pr-3">
-          <Avatar size="default">
-            <AvatarFallback className="bg-primary/20 text-xs font-semibold text-primary">
-              SO
-            </AvatarFallback>
-          </Avatar>
-          <div className="hidden leading-tight sm:block">
-            <p className="text-sm font-medium">Souvik</p>
-            <p className="text-[11px] text-muted-foreground">Administrator</p>
           </div>
         </div>
       </div>
+
+      {/* Right: Compliance Chips & Live Clock */}
+      <div className="flex items-center gap-2 md:gap-3">
+        <Badge
+          variant="outline"
+          className="hidden md:inline-flex items-center gap-1 border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-300 px-2 py-0.5 font-medium rounded"
+        >
+          <ShieldCheck className="size-3 text-emerald-400" />
+          DPDP 2023 COMPLIANT
+        </Badge>
+
+        <Badge
+          variant="outline"
+          className="hidden lg:inline-flex items-center gap-1 border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-300 px-2 py-0.5 font-medium rounded"
+        >
+          <span className="size-1 rounded-full bg-cyan-400" />
+          TRAI DLT VERIFIED
+        </Badge>
+
+        <div className="inline-flex items-center gap-1.5 border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 rounded text-[11px] font-mono text-zinc-300">
+          <Clock className="size-3 text-zinc-500" />
+          <span>{timeStr.ist || "--:--:--"} IST</span>
+        </div>
+      </div>
     </header>
-  )
+  );
 }

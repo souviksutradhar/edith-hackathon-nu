@@ -18,12 +18,30 @@ const toneClasses: Record<Kpi["tone"], string> = {
   neutral: "bg-muted text-muted-foreground",
 }
 
-export function KpiCards({ criticalAlerts, trustScore }: { criticalAlerts: number; trustScore: number }) {
+export function KpiCards({
+  criticalAlerts,
+  trustScore,
+  totalApps = 3,
+}: {
+  criticalAlerts: number
+  trustScore: number
+  totalApps?: number
+}) {
+  const trustTone: Kpi["tone"] =
+    trustScore < 40 ? "danger" : trustScore < 75 ? "info" : "success"
+
+  const trustHint =
+    trustScore < 40
+      ? "Critical drop: Auto-containment triggered"
+      : trustScore < 75
+      ? "Warning: Suspicious intent mismatch detected"
+      : "Baseline secure & validated"
+
   const kpis: Kpi[] = [
     {
       label: "Total Connected Apps",
-      value: "12",
-      hint: "3 monitored closely",
+      value: String(totalApps),
+      hint: `${totalApps} apps actively audited`,
       icon: AppWindow,
       tone: "info",
     },
@@ -31,22 +49,22 @@ export function KpiCards({ criticalAlerts, trustScore }: { criticalAlerts: numbe
       label: "Identity Trust Score",
       value: String(trustScore),
       suffix: "/100",
-      hint: criticalAlerts > 0 ? "Down 4 pts in the last hour" : "Recovered after revocation",
+      hint: trustHint,
       icon: ShieldCheck,
-      tone: "success",
+      tone: trustTone,
     },
     {
       label: "Active Alerts",
       value: String(criticalAlerts),
       suffix: criticalAlerts > 0 ? "Critical" : "",
-      hint: criticalAlerts > 0 ? "Immediate action required" : "No open alerts",
+      hint: criticalAlerts > 0 ? "Immediate containment required" : "Zero open threats",
       icon: BellRing,
       tone: criticalAlerts > 0 ? "danger" : "neutral",
     },
     {
       label: "Data Requests Today",
       value: "1,240",
-      hint: "Peak at 10:45 AM",
+      hint: "Continuous background auditing",
       icon: Database,
       tone: "info",
     },

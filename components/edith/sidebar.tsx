@@ -3,21 +3,43 @@
 import {
   Activity,
   AppWindow,
+  FileCheck2,
+  Flame,
+  Ghost,
   LayoutDashboard,
   Lightbulb,
+  PhoneCall,
+  Radar,
   Settings,
   ShieldCheck,
+  Smartphone,
+  Terminal,
   type LucideIcon,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export type ViewId = "dashboard" | "apps" | "logs" | "recommendations" | "settings"
+export type ViewId =
+  | "radar-triage"
+  | "black-box"
+  | "consent-ledger"
+  | "privacy-doppelganger"
+  | "dashboard"
+  | "radar"
+  | "caller-radar"
+  | "consent-receipts"
+  | "doppelganger"
+  | "mobile-shield"
+  | "apps"
+  | "logs"
+  | "recommendations"
+  | "settings"
 
 const navItems: { id: ViewId; label: string; icon: LucideIcon }[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { id: "apps", label: "Connected Apps", icon: AppWindow },
+  { id: "radar-triage", label: "Radar & Triage", icon: Flame },
+  { id: "black-box", label: "Incident Black Box", icon: Terminal },
+  { id: "consent-ledger", label: "Consent Ledger", icon: FileCheck2 },
+  { id: "privacy-doppelganger", label: "Privacy Doppelganger", icon: Ghost },
   { id: "logs", label: "Activity Logs", icon: Activity },
-  { id: "recommendations", label: "Security Recommendations", icon: Lightbulb },
   { id: "settings", label: "Settings", icon: Settings },
 ]
 
@@ -37,7 +59,7 @@ export function Sidebar({ active, onNavigate, recommendationCount }: SidebarProp
         <div className="leading-tight">
           <p className="text-base font-semibold tracking-widest">E.D.I.T.H.</p>
           <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
-            Identity &amp; Trust
+            Zero-Trust Defense
           </p>
         </div>
       </div>
@@ -77,10 +99,10 @@ export function Sidebar({ active, onNavigate, recommendationCount }: SidebarProp
             <span className="absolute inline-flex size-full animate-ping rounded-full bg-success opacity-60" />
             <span className="relative inline-flex size-2 rounded-full bg-success" />
           </span>
-          Heuristics engine online
+          Radar Heuristic Engine Active
         </div>
         <p className="mt-1 text-xs text-muted-foreground">
-          Monitoring permission behavior in real time.
+          Autonomous mobile scam kill-chain monitoring &amp; 1930 dossier filing.
         </p>
       </div>
     </div>
