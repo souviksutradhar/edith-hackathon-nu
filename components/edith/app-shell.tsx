@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { toast } from "sonner"
 import { AccessLog } from "@/components/edith/access-log"
+import { AppInvestigation } from "@/components/edith/app-investigation"
 import { AppsTable } from "@/components/edith/apps-table"
 import { Header } from "@/components/edith/header"
 import { KpiCards } from "@/components/edith/kpi-cards"
@@ -37,6 +38,7 @@ export function AppShell() {
   const [apps, setApps] = useState<ConnectedApp[]>(initialApps)
   const [logs, setLogs] = useState<AccessLogEntry[]>(initialLogs)
   const [dismissed, setDismissed] = useState<string[]>([])
+  const [investigatingId, setInvestigatingId] = useState<string | null>(null)
   const logCounter = useRef(0)
 
   const appendLog = useCallback((resource: string, result: AccessLogEntry["result"]) => {
@@ -88,6 +90,10 @@ export function AppShell() {
   }
 
   const handleManage = (app: ConnectedApp) => {
+    if (app.id === "resume-builder") {
+      setInvestigatingId(app.id)
+      return
+    }
     toast(`Managing ${app.name}`, {
       description: `${app.permissions.length} permission${app.permissions.length === 1 ? "" : "s"} granted · trust score ${app.trustScore}.`,
     })
@@ -104,11 +110,13 @@ export function AppShell() {
 
   const handleNavigate = (next: ViewId) => {
     setView(next)
+    setInvestigatingId(null)
     setMenuOpen(false)
   }
 
   const handleNotifications = () => {
     setView("dashboard")
+    setInvestigatingId(null)
     if (threat === "active") {
       toast.error("1 critical alert", { description: "Resume Builder is behaving suspiciously." })
     } else {
@@ -119,11 +127,13 @@ export function AppShell() {
   const criticalAlerts = threat === "active" ? 1 : 0
   const trustScore = threat === "active" ? 85 : 91
   const openRecommendations = recommendations.filter((r) => !dismissed.includes(r.id)).length
+  const investigatedApp = apps.find((a) => a.id === investigatingId)
+  const activeNav: ViewId = investigatedApp ? "apps" : view
 
   return (
     <div className="min-h-screen bg-background">
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-sidebar-border lg:block">
-        <Sidebar active={view} onNavigate={handleNavigate} recommendationCount={openRecommendations} />
+        <Sidebar active={activeNav} onNavigate={handleNavigate} recommendationCount={openRecommendations} />
       </aside>
 
       <div
@@ -149,7 +159,7 @@ export function AppShell() {
             menuOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
-          <Sidebar active={view} onNavigate={handleNavigate} recommendationCount={openRecommendations} />
+          <Sidebar active={activeNav} onNavigate={handleNavigate} recommendationCount={openRecommendations} />
         </div>
       </div>
 
@@ -163,6 +173,10 @@ export function AppShell() {
         />
 
         <main className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
+          {investigatedApp ? (
+            <AppInvestigation app={investigatedApp} onBack={() => setInvestigatingId(null)} />
+          ) : (
+            <>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">{viewTitles[view]}</h1>
             <p className="text-sm text-muted-foreground">
@@ -190,6 +204,8 @@ export function AppShell() {
           )}
 
           {view === "settings" && <SettingsView />}
+            </>
+          )}
         </main>
       </div>
     </div>
