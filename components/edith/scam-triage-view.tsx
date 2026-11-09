@@ -149,7 +149,7 @@ function verifySenderHeader(senderInput: string) {
   if (!senderInput || typeof senderInput !== "string") {
     return {
       isValidDLT: false,
-      originStatus: "🔴 UNOFFICIAL SENDER (TRAI DLT Violation — Personal 10-Digit MSISDN)",
+      originStatus: "🔴 UNOFFICIAL SENDER (Unregistered Header — Personal 10-Digit Phone Number)",
       entityName: "Unregistered Sender",
     };
   }
@@ -160,7 +160,7 @@ function verifySenderHeader(senderInput: string) {
   if (/^(\+91[\s-]?)?[6-9]\d{9}$/.test(trimmed) || /^[0-9]{10,13}$/.test(trimmed)) {
     return {
       isValidDLT: false,
-      originStatus: "🔴 UNOFFICIAL SENDER (TRAI DLT Violation — Personal 10-Digit MSISDN)",
+      originStatus: "🔴 UNOFFICIAL SENDER (Unregistered Header — Personal 10-Digit Phone Number)",
       entityName: "Personal Mobile MSISDN",
     };
   }
@@ -202,7 +202,7 @@ function verifySenderHeader(senderInput: string) {
 
   return {
     isValidDLT: false,
-    originStatus: "🔴 UNOFFICIAL SENDER (TRAI DLT Violation — Personal 10-Digit MSISDN)",
+    originStatus: "🔴 UNOFFICIAL SENDER (Unregistered Header — Personal 10-Digit Phone Number)",
     entityName: "Unregistered Entity",
   };
 }

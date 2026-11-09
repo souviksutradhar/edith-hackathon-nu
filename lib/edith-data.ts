@@ -270,7 +270,7 @@ export const initialBlackBoxLogs: BlackBoxLogEntry[] = [
   {
     id: "bb-1094",
     timestamp: "14:52:18.421",
-    processId: "PID 18492 (com.rto.echallan.quickpay)",
+    processId: "Process 18492 (com.rto.echallan.quickpay)",
     processName: "RTO Challan QuickPay",
     sensorHook: "Accessibility Service",
     syscall: "sys_accessibility_event_filter(TYPE_VIEW_TEXT_CHANGED)",
@@ -281,7 +281,7 @@ export const initialBlackBoxLogs: BlackBoxLogEntry[] = [
   {
     id: "bb-1093",
     timestamp: "14:51:55.109",
-    processId: "PID 18492 (com.rto.echallan.quickpay)",
+    processId: "Process 18492 (com.rto.echallan.quickpay)",
     processName: "RTO Challan QuickPay",
     sensorHook: "SMS Broadcast Receiver",
     syscall: "sys_content_provider_query(content://sms/inbox)",
@@ -292,7 +292,7 @@ export const initialBlackBoxLogs: BlackBoxLogEntry[] = [
   {
     id: "bb-1092",
     timestamp: "14:49:12.784",
-    processId: "PID 14201 (com.anydesk.anydeskandroid)",
+    processId: "Process 14201 (com.anydesk.anydeskandroid)",
     processName: "AnyDesk Remote Control",
     sensorHook: "Screen Buffer Mirror",
     syscall: "sys_media_projection_create_virtual_display()",
@@ -303,7 +303,7 @@ export const initialBlackBoxLogs: BlackBoxLogEntry[] = [
   {
     id: "bb-1091",
     timestamp: "14:45:04.221",
-    processId: "PID 9982 (com.telecom.spoofed.sip)",
+    processId: "Process 9982 (com.telecom.spoofed.sip)",
     processName: "VoIP Gateway Trunk +92",
     sensorHook: "Call Audio Tap",
     syscall: "sys_audio_record_routing_intercept()",
@@ -314,7 +314,7 @@ export const initialBlackBoxLogs: BlackBoxLogEntry[] = [
   {
     id: "bb-1090",
     timestamp: "14:40:33.892",
-    processId: "PID 18492 (com.rto.echallan.quickpay)",
+    processId: "Process 18492 (com.rto.echallan.quickpay)",
     processName: "RTO Challan QuickPay",
     sensorHook: "Clipboard Monitor",
     syscall: "sys_clipboard_get_primary_clip()",
@@ -416,7 +416,7 @@ export interface DoppelgangerInterceptEvent {
 export const initialDoppelgangerProfile: DoppelgangerCanaryProfile = {
   syntheticContactsCount: 154,
   mockBankBalance: "₹140.50",
-  mockBankName: "State Bank of India (Canary Sandbox)",
+  mockBankName: "State Bank of India (Synthetic Sandbox)",
   simulatedGeoLocation: "Agartala Airport (IXA), Tripura [23.8869° N, 91.2405° E]",
   simulatedDeviceModel: "Samsung Galaxy M14 (Virtual Decoy OEM)",
   decoyOtpPattern: "Dynamic 6-digit synthetic OTP token pool",

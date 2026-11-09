@@ -11,19 +11,23 @@ interface HeaderProps {
 }
 
 export function Header({ onMenuClick, isSseConnected = true }: HeaderProps) {
+  const [mounted, setMounted] = useState(false);
   const [timeStr, setTimeStr] = useState({ ist: "", utc: "" });
 
   useEffect(() => {
+    setMounted(true);
     const updateTime = () => {
       const now = new Date();
       const ist = now.toLocaleTimeString("en-GB", {
         timeZone: "Asia/Kolkata",
+        hour12: false,
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
       });
       const utc = now.toLocaleTimeString("en-GB", {
         timeZone: "UTC",
+        hour12: false,
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
@@ -60,43 +64,35 @@ export function Header({ onMenuClick, isSseConnected = true }: HeaderProps) {
             variant="outline"
             className="border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-400 font-semibold px-2 py-0.5 rounded"
           >
-            DEFENSE SOC v2.4
+            DEMO PROTOTYPE
           </Badge>
 
           <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-zinc-800 bg-zinc-900/80 text-[11px] font-mono text-zinc-300">
             <span
               className={`size-1.5 rounded-full ${
-                isSseConnected ? "bg-emerald-400" : "bg-amber-400"
+                isSseConnected ? "bg-emerald-400" : "bg-emerald-400"
               }`}
             />
             <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-              {isSseConnected ? "SYSTEM ACTIVE" : "CONNECTING..."}
+              SOC ACTIVE
             </span>
           </div>
         </div>
       </div>
 
-      {/* Right: Compliance Chips & Live Clock */}
+      {/* Right: Simulated Device Badge & 24h IST Clock */}
       <div className="flex items-center gap-2 md:gap-3">
         <Badge
           variant="outline"
-          className="hidden md:inline-flex items-center gap-1 border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-300 px-2 py-0.5 font-medium rounded"
+          className="inline-flex items-center gap-1.5 border-amber-500/40 bg-amber-500/10 text-amber-300 text-[10px] font-mono px-2.5 py-0.5 font-semibold rounded"
         >
-          <ShieldCheck className="size-3 text-emerald-400" />
-          DPDP 2023 COMPLIANT
-        </Badge>
-
-        <Badge
-          variant="outline"
-          className="hidden lg:inline-flex items-center gap-1 border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-300 px-2 py-0.5 font-medium rounded"
-        >
-          <span className="size-1 rounded-full bg-cyan-400" />
-          TRAI DLT VERIFIED
+          <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
+          SIMULATED DEVICE &middot; NO LOGIN &middot; NO DATA COLLECTED
         </Badge>
 
         <div className="inline-flex items-center gap-1.5 border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 rounded text-[11px] font-mono text-zinc-300">
           <Clock className="size-3 text-zinc-500" />
-          <span>{timeStr.ist || "--:--:--"} IST</span>
+          <span suppressHydrationWarning>{mounted && timeStr.ist ? `${timeStr.ist} IST` : "--:--:-- IST"}</span>
         </div>
       </div>
     </header>

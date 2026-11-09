@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import { Radio, Zap } from "lucide-react"
+import { Loader2, Play, Radio, RotateCcw, Zap } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { AboutView } from "@/components/edith/about-view"
 import { AccessLog } from "@/components/edith/access-log"
 import { AppsTable } from "@/components/edith/apps-table"
 import { CallerRadar } from "@/components/edith/caller-radar"
@@ -12,6 +13,7 @@ import { ConsentReceiptLedger } from "@/components/edith/consent-receipt"
 import { DossierModal } from "@/components/edith/dossier-modal"
 import { Header } from "@/components/edith/header"
 import { KpiCards } from "@/components/edith/kpi-cards"
+import { LiveAttackDemo } from "@/components/edith/live-attack-demo"
 import { MobileShield } from "@/components/edith/mobile-shield"
 import { PermissionBlackBox } from "@/components/edith/permission-black-box"
 import { PrivacyDoppelganger } from "@/components/edith/privacy-doppelganger"
@@ -22,6 +24,7 @@ import { SettingsView } from "@/components/edith/settings-view"
 import { Sidebar, type ViewId } from "@/components/edith/sidebar"
 import { ThreatAlert, type ThreatState } from "@/components/edith/threat-alert"
 import { ThreatModal } from "@/components/edith/threat-modal"
+import { SimulationProvider, useSimulation } from "@/lib/simulation-context"
 import {
   formatTime,
   liveResources,
@@ -30,16 +33,17 @@ import {
   type ComplaintDossier,
   type ConnectedApp,
   type DeviceTelemetry,
+  type LogResult,
   type ThreatAnalysis,
 } from "@/lib/edith-data"
 import { cn } from "@/lib/utils"
 
 const viewTitles: Record<ViewId, string> = {
-  "radar-triage": "Radar & Threat Triage",
+  "radar-triage": "Live Attack Demo",
   "black-box": "Incident Black Box",
   "consent-ledger": "Consent Ledger",
   "privacy-doppelganger": "Privacy Doppelganger",
-  dashboard: "Radar & Threat Triage",
+  dashboard: "Live Attack Demo",
   radar: "Scam Kill-Chain Radar",
   "caller-radar": "Caller & SMS Threat Intelligence",
   "consent-receipts": "Consent Ledger",
@@ -49,10 +53,19 @@ const viewTitles: Record<ViewId, string> = {
   logs: "Activity Logs",
   recommendations: "Security Recommendations",
   settings: "Settings",
+  about: "About E.D.I.T.H.",
 }
 
 
 export function AppShell() {
+  return (
+    <SimulationProvider>
+      <AppShellInner />
+    </SimulationProvider>
+  )
+}
+
+function AppShellInner() {
   const [view, setView] = useState<ViewId>("radar-triage")
   const [query, setQuery] = useState("")
   const [menuOpen, setMenuOpen] = useState(false)
@@ -66,6 +79,25 @@ export function AppShell() {
   const [isSimulating, setIsSimulating] = useState<boolean>(false)
   const [dismissed, setDismissed] = useState<string[]>([])
 
+  // Shared simulation state from context
+  const { runSimulation, resetSimulation, isRunning, events, hasRun } = useSimulation()
+
+  const allActivityLogs: AccessLogEntry[] = useMemo(() => {
+    if (!hasRun || events.length === 0) return []
+    return events.map((e) => ({
+      id: e.id,
+      time: e.timestamp,
+      app: e.app,
+      resource: e.hook,
+      result: (e.severity === "critical"
+        ? "Blocked"
+        : e.severity === "warning"
+        ? "Flagged"
+        : "Allowed") as LogResult,
+      details: e.details,
+    }))
+  }, [events, hasRun])
+
   // Radar State
   const [radarStage, setRadarStage] = useState<number>(0)
   const [dossier, setDossier] = useState<ComplaintDossier | null>(null)
@@ -78,7 +110,7 @@ export function AppShell() {
     return (
       dossier || {
         dossierId: "EDITH-2026-IN-8941",
-        generatedAt: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
+        generatedAt: "17:05:14 IST",
         reportingPortal: "National Cybercrime Reporting Portal (https://cybercrime.gov.in)",
         helpline: "1930 (Toll-Free 24x7 Citizen Cyber Defense)",
         targetApp: {
@@ -604,30 +636,64 @@ export function AppShell() {
         />
 
         <main className="mx-auto max-w-7xl space-y-6 p-4 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/80 pb-3">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-zinc-100">{viewTitles[view]}</h1>
-            </div>
+          {/* Header Row for Secondary Views without custom PageHeader */}
+          {view !== "radar-triage" &&
+            view !== "dashboard" &&
+            view !== "black-box" &&
+            view !== "consent-ledger" &&
+            view !== "consent-receipts" &&
+            view !== "privacy-doppelganger" &&
+            view !== "doppelganger" &&
+            view !== "logs" && (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/80 pb-3">
+              <div>
+                <h1 className="text-xl font-bold tracking-tight text-zinc-100">{viewTitles[view]}</h1>
+              </div>
 
-            <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={handleSimulateWebhook}
-                disabled={isWebhookSending}
-                className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-mono text-xs h-8"
-              >
-                <Radio className="mr-1.5 size-3 text-cyan-400" />
-                Simulate Device Webhook
-              </Button>
-            </div>
-          </div>
+              <div className="flex items-center gap-2.5">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={resetSimulation}
+                  className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-mono text-xs h-8 px-3"
+                >
+                  <RotateCcw className="mr-1.5 size-3 text-zinc-400" />
+                  Reset
+                </Button>
 
-          {/* VIEW 1: RADAR & THREAT TRIAGE */}
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => runSimulation()}
+                  disabled={isRunning}
+                  className={cn(
+                    "font-mono text-xs font-bold h-8 px-3.5 transition-all shadow-sm",
+                    isRunning
+                      ? "bg-zinc-800 text-zinc-400 border border-zinc-700 cursor-not-allowed"
+                      : "bg-emerald-600 hover:bg-emerald-500 text-zinc-950 border border-emerald-500/80"
+                  )}
+                >
+                  {isRunning ? (
+                    <>
+                      <Loader2 className="mr-1.5 size-3 animate-spin text-emerald-400" />
+                      Simulating...
+                    </>
+                  ) : (
+                    <>
+                      <Play className="mr-1.5 size-3 fill-current" />
+                      Run Attack Simulation
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* VIEW 1: LIVE ATTACK DEMO (RADAR & TRIAGE) */}
           {(view === "radar-triage" || view === "dashboard") && (
             <div className="space-y-6">
-              <ScamTriageView onOpenDossier={() => setShowDossierModal(true)} />
+              <LiveAttackDemo />
             </div>
           )}
 
@@ -635,7 +701,6 @@ export function AppShell() {
           {view === "black-box" && (
             <div className="space-y-6">
               <PermissionBlackBox />
-              <AccessLog logs={logs} query="ISOLATED|PACKED|QUARANTINED|eBPF|sys_" title="Black Box Kernel Syscall Stream" />
             </div>
           )}
 
@@ -643,7 +708,6 @@ export function AppShell() {
           {(view === "consent-ledger" || view === "consent-receipts") && (
             <div className="space-y-6">
               <ConsentReceiptLedger />
-              <AccessLog logs={logs} query="Consent|DPDP|Tokens|Revoked|CR-" title="Consent Ledger Mutation Trail" />
             </div>
           )}
 
@@ -651,7 +715,6 @@ export function AppShell() {
           {(view === "privacy-doppelganger" || view === "doppelganger") && (
             <div className="space-y-6">
               <PrivacyDoppelganger />
-              <AccessLog logs={logs} query="Canary|Doppelganger|Decoy|Intercept|Spoof" title="Shadow Sandbox Intercept Feed" />
             </div>
           )}
 
@@ -664,7 +727,6 @@ export function AppShell() {
                 onSimulateAttack={handleSimulateRATAttack}
                 onResetDevice={handleResetDevice}
               />
-              <AccessLog logs={logs} query="RAT|Mirror|Accessibility|KILL_SWITCH" title="RAT Incident Stream" />
             </div>
           )}
 
@@ -684,12 +746,21 @@ export function AppShell() {
 
           {/* ACTIVITY LOGS VIEW */}
           {view === "logs" && (
-            <AccessLog logs={logs} query={query} heightClass="h-[32rem]" title="Activity Logs" />
+            <div className="space-y-6">
+              <AccessLog />
+            </div>
           )}
 
           {/* RECOMMENDATIONS VIEW */}
           {view === "recommendations" && (
             <RecommendationsView dismissed={dismissed} onApply={handleApplyRecommendation} />
+          )}
+
+          {/* ABOUT E.D.I.T.H. VIEW */}
+          {view === "about" && (
+            <div className="space-y-6">
+              <AboutView />
+            </div>
           )}
 
           {/* SETTINGS VIEW */}

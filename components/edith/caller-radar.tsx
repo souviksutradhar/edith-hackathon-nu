@@ -510,7 +510,7 @@ ${reportReference ? `DoT Reference ID: ${reportReference}` : ""}`;
                   <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
                   <div className="text-xs">
                     <span className="font-semibold text-emerald-300">
-                      Report Dispatched to DoT Sanchar Saathi &amp; 1930 Portal:
+                      Complaint packet prepared (user files it):
                     </span>{" "}
                     <span className="font-mono text-foreground font-bold">
                       Ref #{reportReference}
@@ -518,7 +518,7 @@ ${reportReference ? `DoT Reference ID: ${reportReference}` : ""}`;
                   </div>
                 </div>
                 <Badge variant="outline" className="border-emerald-500/30 text-emerald-300 text-[10px]">
-                  Carrier Cutoff Queued
+                  Evidence Hash Sealed
                 </Badge>
               </div>
             )}

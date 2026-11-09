@@ -563,12 +563,12 @@ let zeroTrustPolicies = [
   },
   {
     id: "chakshu-auto-dispatch",
-    label: "Automatic Sanchar Saathi / Chakshu Reporting (> 90% Risk)",
-    description: "Transmit evidence packet to DoT and NCRP 1930 when fraud probability exceeds 90%.",
+    label: "Sanchar Saathi / Chakshu Complaint Preparation (> 90% Risk)",
+    description: "Prepare evidence packet for DoT and NCRP 1930 when fraud probability exceeds 90% (user files it).",
     enabled: true,
     category: "telecom",
     eventCount: 87,
-    eventLabel: "Packets Transmitted",
+    eventLabel: "Packets Prepared",
     mitigationHook: "SANCHAR_SAATHI_NCRP_1930",
     statutoryRef: "TRAI TCCCPR 2018 & DoT Circular"
   },
@@ -1525,7 +1525,7 @@ app.post('/api/lookup-threat', async (req, res) => {
         log: callerLog
       });
 
-      // Policy Enforcement: Automatic Sanchar Saathi / Chakshu Reporting (> 90% Risk)
+      // Policy Enforcement: Sanchar Saathi / Chakshu Evidence Packet Preparation (> 90% Risk)
       if (result.riskScore >= 90) {
         if (isPolicyEnabled('chakshu-auto-dispatch')) {
           incrementPolicyCount('chakshu-auto-dispatch');
@@ -1535,7 +1535,7 @@ app.post('/api/lookup-threat', async (req, res) => {
             app: "Sanchar Saathi / NCRP 1930 Gateway",
             resource: `${result.phoneNumber} / Evidence Seal`,
             result: "Blocked",
-            details: `[1930 DISPATCH] TRANSMITTED TO SANCHAR SAATHI / NCRP 1930 INGESTION GATEWAY (SHA-256 sealed, BNS § 318(4) & IT Act § 66D)`
+            details: `[1930 DOSSIER] Complaint packet prepared (user files it) for Sanchar Saathi & NCRP 1930 (SHA-256 sealed, BNS § 318(4) & IT Act § 66D)`
           };
           logs.unshift(autoChakshuLog);
           broadcastSSE('log_entry', autoChakshuLog);
@@ -1547,7 +1547,7 @@ app.post('/api/lookup-threat', async (req, res) => {
             app: "Sanchar Saathi / NCRP 1930 Gateway",
             resource: `${result.phoneNumber}`,
             result: "Flagged",
-            details: `[1930 DISPATCH BYPASSED] 90%+ risk detected, but Automatic Sanchar Saathi Reporting policy is DISABLED.`
+            details: `[1930 DOSSIER BYPASSED] 90%+ risk detected, but Complaint Preparation policy is DISABLED.`
           };
           logs.unshift(bypassLog);
           broadcastSSE('log_entry', bypassLog);

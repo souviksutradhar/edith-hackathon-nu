@@ -1,191 +1,189 @@
-# Project E.D.I.T.H.
-### **E**nhanced **D**igital **I**dentity, **T**rust & **H**euristics
-> **Zero-Trust Mobile Threat Radar, Autonomous Kill-Switch & Forensic Ledger for Indian Telecom & Mobile Banking Defense**
+# E.D.I.T.H. — Sovereign Mobile Cyber-Defense & Anti-Scam Command Center
+> **E**arly **D**etection, **I**solation &amp; **T**elemetry **H**oneypot  
+> *Deterministic, In-Browser Endpoint Defense against WhatsApp/SMS Sideload Scams in India*
 
 ---
 
-## 🛡️ Executive Summary
+## 🛡️ 1. What is E.D.I.T.H.?
 
-Mobile banking and financial fraud across India has evolved into sophisticated multi-stage kill-chains combining **social engineering, malicious APK sideloading, Accessibility API exploitation, and Remote Access Tool (RAT) takeovers** (e.g., fake RTO Challan, electricity bill disconnection, parcel delivery KYC scams).
+**E.D.I.T.H.** is a client-side, zero-login, privacy-preserving mobile cyber-defense command center prototype. It demonstrates how autonomous behavioral guardrails on Android smartphones can detect, isolate, and neutralize weaponized sideloaded APKs **before** a victim's one-time password (OTP) or bank credentials are stolen.
 
-**Project E.D.I.T.H.** is an endpoint defense platform designed to protect Indian mobile users through real-time behavioral correlation, autonomous kill-switches, verifiable consent tracking under the **DPDP Act 2023**, and admissible forensic chain-of-custody bundles under **Section 65B of the Indian Evidence Act**.
-
----
-
-## 🏛️ Core Architectural Modules
-
-```
-                                  +-------------------------------------------------------+
-                                  |                 PROJECT E.D.I.T.H.                    |
-                                  |             ZERO-TRUST COMMAND CENTER                 |
-                                  +-------------------------------------------------------+
-                                                              |
-                 +--------------------------------------------+--------------------------------------------+
-                 |                                            |                                            |
-                 v                                            v                                            v
-    +--------------------------+                 +--------------------------+                 +--------------------------+
-    |   SCAM KILL-CHAIN RADAR  |                 |     MOBILE SHIELD        |                 |   CALLER & SMS RADAR     |
-    |  - 5-Stage Progression   |                 |  - Offhook Voice Call    |                 |  - AI Telecom Caller ID  |
-    |  - Deterministic Trust   |                 |  - AnyDesk / Mirroring   |                 |  - DoT Sanchar Saathi    |
-    |  - NCRP 1930 FIR Dossier |                 |  - Accessibility Hook    |                 |  - Chakshu Portal Hook   |
-    |  - Gemini Hinglish Alert |                 |  - Kill-Switch (Score 15)|                 |  - Carrier Cutoff Queue  |
-    +--------------------------+                 +--------------------------+                 +--------------------------+
-                 |                                            |                                            |
-                 +--------------------------------------------+--------------------------------------------+
-                                                              |
-                 +--------------------------------------------+--------------------------------------------+
-                 |                                            |                                            |
-                 v                                            v                                            v
-    +--------------------------+                 +--------------------------+                 +--------------------------+
-    |   PERMISSION BLACK BOX   |                 |     CONSENT RECEIPTS     |                 |   PRIVACY DOPPELGANGER   |
-    |  - 60s Rolling Buffer    |                 |  - DPDP Act 2023 Sec 6   |                 |  - Shadow Sandbox        |
-    |  - eBPF Syscall Monitor  |                 |  - ISO 27560 Standard    |                 |  - 154 Canary Contacts   |
-    |  - Sec 65B Evidence Cert |                 |  - SHA-256 Fingerprint   |                 |  - Mock SBI ₹140 Statement|
-    |  - Legal Forensics Export|                 |  - Instant Token Purge   |                 |  - Decoy OTP Stream      |
-    +--------------------------+                 +--------------------------+                 +--------------------------+
-                                                              |
-                                                              v
-                                  +-------------------------------------------------------+
-                                  |             SERVER-SENT EVENTS (SSE) STREAM           |
-                                  |  - GET /api/stream-threats (Unidirectional Push)      |
-                                  |  - POST /api/webhook/device-event (OEM Ingestion)     |
-                                  |  - GET / (Mobile Field Incident Transmitter)          |
-                                  +-------------------------------------------------------+
-```
+- **100% In-Browser & Simulated:** Runs entirely in your browser using deterministic TypeScript state. No login, no tracking, no external backend required, and no telemetry collected or transmitted anywhere.
+- **Transparent Mathematical Scoring:** Trust is a pure arithmetic function derived from 9 transparent behavioral risk rules (`lib/riskEngine.ts`). Zero black-box AI hallucination.
+- **Bilingual Warning & Autonomous Containment:** Evaluates intent mismatch, triggers OEM-style app freeze when risk reaches $\ge 70$, injects honeypot canary data, and prepares a cryptographically hashed Section 63 BSA forensic evidence bundle for reporting to the National Cyber Crime Portal (1930).
 
 ---
 
-### 1. Scam Kill-Chain Radar (`/components/edith/scam-radar.tsx`)
-* **Explainable Scoring Engine**: Computes dynamic trust:
-  $$\text{Trust Score} = 100 - \sum \text{Additive Risk Weights}$$
-* **5-Stage Attack Progression**:
-  1. `LURE_RECEIVED`: Phishing link via WhatsApp / SMS detected.
-  2. `SIDELOADED_INSTALL`: Untrusted APK package registered ($\text{Trust} = 75$).
-  3. `INTENT_MISMATCH`: Declared utility app requests `SMS` + `BIND_ACCESSIBILITY_SERVICE` ($\text{Trust} = 50$, **Warning Triggered**).
-  4. `SECOND_STAGE_PAYLOAD`: Unverified IP payload downloaded ($\text{Trust} = 30$).
-  5. `ATTEMPTED_HARVEST`: OTP harvest attempt $\rightarrow$ **AUTO-FREEZE EXECUTED** ($\text{Trust} = 10$).
-* **National Cyber Crime Reporting Portal (1930) Dossier**: Auto-generates complete evidence packets with target app SHA-256, C2 server IPs, and ready-to-file formal FIR draft text.
-* **Multilingual AI Warnings**: Generates urgent plain Hindi / Hinglish warning alerts powered by Gemini 1.5 with deterministic offline fallback.
+## ⚡ 2. The Threat: The WhatsApp APK Scam Epidemic
+
+In India, cyber syndicates bypass Google Play Protect not through zero-day operating system exploits, but through urgent social engineering delivered over WhatsApp and SMS:
+
+1. **Urgent Threat Lure:** The victim receives a message threatening immediate electricity disconnection, an unpaid court-date traffic challan, or a suspended bank KYC.
+2. **Coerced Sideloading:** The victim is instructed to install a custom APK (`RTO-Challan-Pay.apk` or `Electricity-Update.apk`) sent directly as a WhatsApp file attachment or third-party download link.
+3. **Privilege Escalation:** Upon installation, the app requests high-privilege Android permissions: `READ_SMS`, `BIND_ACCESSIBILITY_SERVICE`, and `REQUEST_INSTALL_PACKAGES`.
+4. **Rapid Kill-Chain Harvest:** Within seconds of approval, the rogue application conceals its launcher icon (preventing uninstallation), begins bulk-scraping SMS inboxes (>10x baseline), and beacons out to offshore Command-and-Control (C2) servers.
+
+Traditional mobile antiviruses rely on static signature matching and fail against freshly re-packed APKs. **E.D.I.T.H. stops the attack by monitoring behavioral anomalies dynamically.**
 
 ---
 
-### 2. Mobile Shield & RAT Defense (`/components/edith/mobile-shield.tsx`)
-* Evaluates 4 correlated attack flags:
-  1. Active unknown voice call (`CALL_STATE_OFFHOOK`)
-  2. Active screen mirroring / Remote desktop software (AnyDesk, TeamViewer, RustDesk)
-  3. Sensitive foreground application (`com.phonepe.app`, `in.org.npci.upiapp`, banking screens)
-  4. Sideloaded APK with active Accessibility Services (`BIND_ACCESSIBILITY_SERVICE`)
-* **Zero-Trust Kill-Switch**: Drops trust score from $95 \rightarrow 15$, isolates virtual display stream, quarantines accessibility hooks, and enforces Android `FLAG_SECURE`.
+## 📱 3. Virtual Phone: SMS Shield (`lib/smsEngine.ts`)
+
+A dedicated simulated mobile inbox that analyzes incoming SMS lures **before** any application is sideloaded. It evaluates messages through an animated 5-step heuristic pipeline (~600ms per step):
+
+1. **Step 1: Sender Header Check:** Validates 6-character TRAI DLT commercial headers (e.g. `AX-DEMOBK`, `VM-PARIVA`, `AD-SBIINB`). Flags plain 10-digit mobile numbers claiming bank, RTO, or government identity (`+25 pts`).
+2. **Step 2: URL & Domain Analysis:** Checks against sovereign allowlists (`.gov.in`, `.nic.in`) using precise suffix matching (`gov.in.evil.com` fails). Identifies lookalike domains (`+35 pts`), URL shorteners (`+20 pts`), insecure HTTP (`+10 pts`), and high-abuse TLDs (`.top`, `.xyz`, `.click`, `+15 pts`).
+3. **Step 3: Urgency & Coercive Content:** Detects panic keywords in English and Hinglish (`immediately`, `blocked`, `arrest`, `giraftari`, `abhi`, `turant`, `+15 pts`) and digital arrest / credential demands (`+20 to +25 pts`). Differentiates legitimate "do not share" OTP advisories (which remain 0 pts / Green).
+4. **Step 4: Executable / APK Attachment Scan:** Flags direct links to `.apk` files or instructions to sideload an app (`+40 pts`).
+5. **Step 5: Synthesized Verdict & Forensics:** Categorizes risk into **Likely scam** ($\ge 60$, Red), **Suspicious** ($30-59$, Amber), or **Looks safe** ($< 30$, Green), providing defanged links (`hxxp://example[.]top`), bilingual warnings, and an action button: **"User installs the app anyway &rarr; Run Kill-Chain"**.
 
 ---
 
-### 3. Live Caller & SMS Threat Intelligence (`/components/edith/caller-radar.tsx`)
-* **AI-Powered Caller ID**: Scans phone numbers and call transcripts/SMS body with Gemini 1.5 for urgency coercion, authority impersonation, and fraudulent payment prompts.
-* **Sanchar Saathi & Chakshu Portal Integration**: Queries citizen complaint records in real-time ($87+$ complaints on electricity bill scammers, $64+$ on courier scams).
-* **One-Click Reporting**: Dispatches citizen reports to the Department of Telecommunications (DoT) and returns live carrier disconnection reference IDs (e.g. `CK-2026-641290`).
+## 📋 4. Instant Cyber Fraud Complaint Kit (`lib/complaintEngine.ts`)
+
+A zero-latency, 100% in-browser legal drafting engine that transforms detected cyber threats into a structured **"Cyber Fraud Complaint Draft"** ready for submission to the National Cyber Crime Reporting Portal (`cybercrime.gov.in`), `1930`, or `Chakshu`:
+
+- **Sub-Second Generation:** Measures and displays exact compilation time (`Ready in 0.04s` via `performance.now()`).
+- **Two Instant Questions:** Assesses financial loss (No / Yes) and app installation (No / Yes / N/A).
+- **Rule-Based Crime Classification:**
+  - `apk_malware`: IT Act § 43, § 66, § 66C, § 66D; BNS § 318(4), § 319(2)
+  - `govt_impersonation`: BNS § 204, § 318(4), § 319(2), § 351; IT Act § 66C, § 66D
+  - `phishing_kyc`: IT Act § 66C, § 66D; BNS § 318(4), § 319(2)
+  - `extortion`: BNS § 308(2), § 351; IT Act § 66E
+  - `job_investment`: IT Act § 66D; BNS § 318(4)
+- **Emergency Safeguard Routing:**
+  - *If money was lost:* Immediate 1930 dialer hook + bank alert protocol + cybercrime.gov.in.
+  - *If no money lost:* Carrier disconnection route via Chakshu (Sanchar Saathi).
+  - *If app was installed:* 5 mandatory sanitization steps (uninstall, revoke Accessibility, reset PINs).
+- **Four Export Modes:**
+  - **Download PDF:** Triggered via `window.print()` with a dedicated print stylesheet printing only the clean draft in black-and-white.
+  - **Download .TXT:** Instant local file download via browser `Blob`.
+  - **Copy for Portal:** Copies a clean plain-text summary formatted for online description text boxes.
+  - **Direct Portal Links:** Opens the respective portal in a new tab.
 
 ---
 
-### 4. Permission Black Box (`/components/edith/permission-black-box.tsx`)
-* **Flight Data Recorder UI**: Tactical dark terminal with pulsing `ARMED / RECORDING` status.
-* **Continuous Metrics**: 60-second rolling ring buffer, monotonic event counter (`#1,048,291`), and live eBPF system call hooks.
-* **Section 65B Indian Evidence Act Forensic Bundle**: Instant export of cryptographically signed `.JSON` incident dossiers containing memory hashes, syscall traces, and legal authenticity certificates admissible in judicial proceedings.
+## ⏱️ 5. How the 25-Second Attack Simulation Works
+
+Clicking **"Run Attack Simulation"** runs a scripted 5-stage attack kill-chain over 25 seconds:
+
+| Stage | Name | Elapsed | Behavioral Activity | E.D.I.T.H. Defensive Action |
+| :--- | :--- | :--- | :--- | :--- |
+| **Stage 1** | **Lure Received** | `T + 0s` | SMS/WhatsApp lure received from `+91 98765 43210` with fake APK link. | Flagged as unverified 10-digit sender (TRAI DLT mismatch). |
+| **Stage 2** | **Unknown Install** | `T + 5s` | `rto-challan` installed directly from a WhatsApp file attachment. | Source evaluated: `WhatsApp file (+25 pts)`. Status moves to **Watching**. |
+| **Stage 3** | **Risky Permissions** | `T + 10s` | App requests `READ_SMS (+30 pts)` &amp; `BIND_ACCESSIBILITY_SERVICE (+30 pts)`. | Intent mismatch alert triggered. Risk hits **85**, status moves to **Suspicious/Frozen**. |
+| **Stage 4** | **Hidden Behavior** | `T + 15s` | App disables its launcher icon (`+20 pts`) and beacons to unindexed domain (`+10 pts`). | Stealth evasion detected. Trust score plunges to **0**. |
+| **Stage 5** | **Auto-Freeze** | `T + 20s` | App attempts bulk query (212 SMS in 4s, `+25 pts`). Total Risk: **100/100**. | **CONTAINMENT ACTIVATED**: Process isolated, permissions revoked, canary data fed, SHA-256 evidence packet locked. |
 
 ---
 
-### 5. Verifiable Consent Receipts (`/components/edith/consent-receipt.tsx`)
-* **DPDP Act 2023 / ISO 27560 Verifiable Privacy Ledger**:
-  * Tracks explicit purpose binding (e.g., *"Transactional SMS verification only"*).
-  * Records data retention schedules, granted timestamps, and SHA-256 consent fingerprints.
-  * **Instant Token Revocation**: Exercising Section 6(4) of the DPDP Act 2023 immediately wipes access tokens and records the audit mutation in the ledger.
+## 📐 6. Transparent Weighted Risk Engine (`lib/riskEngine.ts`)
+
+Every score is derived transparently by `evaluateAppRisk(app)`:
+
+$$\text{Total Risk} = \sum \text{Triggered Rule Points}$$
+$$\text{Trust Score} = \max(0, \min(100, 100 - \text{Total Risk}))$$
+
+### Status Thresholds
+- **Risk < 40:** `Trusted` (Green)
+- **Risk 40–69:** `Watching / Suspicious` (Amber)
+- **Risk $\ge$ 70:** `Frozen` (Auto-Containment, Rose/Red)
+
+### The 9 Behavioral Rules
+| Rule Identifier | Violation | Points | Trigger Logic |
+| :--- | :--- | :---: | :--- |
+| `UNTRUSTED_INSTALL_SOURCE` | Installed from WhatsApp / Sideload | **+25** | Installer source $\neq$ Google Play Protect |
+| `IMPERSONATES_BRAND` | Impersonates State / Bank Brand | **+10** | Declares official branding without signed key |
+| `UNEXPECTED_SMS` | Unexpected SMS Access Scope | **+30** | `READ_SMS` requested by non-SMS/banking app |
+| `UNEXPECTED_ACCESSIBILITY` | Unexpected Accessibility Hook | **+30** | `BIND_ACCESSIBILITY_SERVICE` requested |
+| `UNEXPECTED_INSTALL_PACKAGES` | Secondary Dropper Capability | **+20** | `REQUEST_INSTALL_PACKAGES` requested |
+| `UNEXPECTED_NOTIFICATION_LISTENER`| Notification Scraper Hook | **+15** | `BIND_NOTIFICATION_LISTENER` requested |
+| `BULK_SMS_READ_SPIKE` | Bulk SMS Harvest (>10x baseline) | **+25** | $\ge 200$ SMS queries in $<10$ seconds |
+| `HIDES_APP_ICON` | Conceals Launcher Icon | **+20** | Main launcher activity component disabled |
+| `CONTACTS_NEW_DOMAIN` | Post-Grant C2 Domain Beacons | **+10** | Immediate outbound socket to unindexed IP |
 
 ---
 
-### 6. Privacy Doppelganger (`/components/edith/privacy-doppelganger.tsx`)
-* **Shadow Sandbox / Synthetic Persona Environment**:
-  * **Real User Identity**: $1,280$ contacts encrypted with AES-GCM-256, real bank accounts protected by `FLAG_SECURE`.
-  * **Doppelganger Canary Profile**: $154$ synthetic contacts, mock SBI statement balance of ₹140.50, spoofed GPS coordinates at *Agartala Airport (IXA), Tripura*.
-* **Autonomous Decoy Emulation**: When active, untrusted sideloaded APKs probing the device are fed canary data and synthetic OTPs while genuine user credentials remain locked in the hardware vault.
+## 🚀 7. Getting Started & Running Locally
 
----
+This project runs 100% locally with zero external configuration or backend requirements.
 
-### 7. Real-Time SSE Stream & External Webhook Ingestion
-* **SSE Endpoint (`GET /api/stream-threats`)**: Unidirectional push stream delivering real-time telemetry, radar advances, and fraud alerts to connected dashboards.
-* **Webhook Ingestion (`POST /api/webhook/device-event`)**: Ingests external device payloads from Android AppOps daemons or remote honeypots and broadcasts them over SSE.
-* **Mobile Field Incident Transmitter (`GET /`)**: Lightweight mobile-optimized console accessible over Pinggy or ngrok tunnels, enabling remote smartphone testing with 1-tap presets.
-
----
-
-## ⚖️ Indian Statutory Compliance & Legal Violation Mapping
-
-| Statutory Law | Section | Legal Offense Covered by E.D.I.T.H. |
-| :--- | :--- | :--- |
-| **Bharatiya Nyaya Sanhita (BNS) 2023** | **Sec 318(4)** | Cheating and dishonestly inducing delivery of property (Online financial extortion) |
-| **Bharatiya Nyaya Sanhita (BNS) 2023** | **Sec 319** | Cheating by personation (Impersonating Government RTO, Electricity Boards, or Police) |
-| **Information Technology Act 2000** | **Sec 66D** | Cheating by personation using computer resource or mobile device |
-| **Information Technology Act 2000** | **Sec 43/66** | Unauthorized data extraction, OTP scraping, spyware payload download & hacking |
-| **DPDP Act 2023** | **Sec 6(1) & 6(4)** | Explicit purpose limitation & unconditional right to withdraw consent / wipe tokens |
-| **Indian Evidence Act 1872 / BSA 2023** | **Sec 65B** | Admissibility of electronic records and cryptographic chain-of-custody certificate |
-
----
-
-## 🚀 Quickstart & Setup
-
-### 1. Prerequisites
-- Node.js 18+ (tested on Node 20 / 22)
+### Prerequisites
+- Node.js 18+ or 20+
 - npm or pnpm
 
-### 2. Environment Configuration
-Create `.env` in the root and in `/backend`:
+### Quickstart
 ```bash
-PORT=5000
-GEMINI_API_KEY=your_gemini_api_key_here
-```
-*(Note: E.D.I.T.H. includes deterministic heuristic fallbacks for all AI models, ensuring 100% functionality even during offline testing or API rate-limits).*
+# Clone the repository
+git clone https://github.com/souvikhaldar/edith-hackathon.git
+cd edith-hackathon
 
-### 3. Run Backend (Port 5000)
-```bash
-cd backend
+# Install dependencies
 npm install
-node server.js
-```
 
-### 4. Run Frontend (Port 3000)
-```bash
-npm install
+# Start Next.js development server
 npm run dev
 ```
 
-Visit the E.D.I.T.H. Command Center at **`http://localhost:3000`**.
+Open your browser and navigate to **`http://localhost:3000`**.
 
 ---
 
-## 📱 Mobile Field Testing via Pinggy / ngrok
+## 🎬 8. 2-Minute Judge Walkthrough
 
-To test live telemetry ingestion from an actual smartphone:
-```bash
-# Forward backend port 5000 through Pinggy
-ssh -p 443 -R0:localhost:5000 a.pinggy.io
-```
-Open the generated HTTPS URL on your smartphone to access the **E.D.I.T.H. Field Incident Transmitter (`GET /`)**. Submitting an incident will immediately light up the Command Center dashboard over SSE!
+1. **Virtual Phone: SMS Shield (Top Section):**
+   - Select **Sample A: Electricity / RTO Challan APK Scam** from the dropdown and click **Receive**.
+   - Watch the animated 5-step heuristic pipeline scan the message (~600ms per step).
+   - Observe the Red **Likely scam** verdict (Score 100/100), the defanged link (`hxxp://parivahan-echallan[.]top/RTO_Challan.apk`), and the bilingual warning.
+   - Click **"Generate Complaint Kit"** to instantly generate a printable Section 63 BSA draft, or click **"User installs the app anyway &rarr; Run Kill-Chain"**.
+2. **Live Attack Demo (Bottom Section):**
+   - Watch the attack launch smoothly into Stage 1 (Lure received via SMS).
+   - Observe the 5-stage stepper advance every 5 seconds.
+   - Watch the animated trust score ring for **RTO Challan QuickPay** drop from 100 &rarr; 75 &rarr; 15 &rarr; 0.
+   - Expand the **"Why this score?"** accordion on the RTO card to see each rule firing with exact points.
+   - Note the bilingual emergency warning banner and the browser-computed SHA-256 evidence packet hash.
+   - Click **"Generate Complaint Kit"** directly from the containment card.
+3. **Cyber Fraud Complaint Kit Modal:**
+   - See the generation time: `Ready in 0.04s` (measured dynamically).
+   - Select "Did you lose money?" and "Did you install the app?" to watch safety steps and legal sections update in real time.
+   - Click **"Download PDF"** (clean black-and-white print sheet), **"Download .txt"**, or **"Copy text for portal"**.
+4. **Incident Black Box:**
+   - Navigate via the sidebar to **Incident Black Box**.
+   - Review the 60-second rolling telemetry buffer showing the initial SMS lure, permissions, and "KIT GENERATED" audit log.
+   - Click **"Export Evidence Log (.JSON)"** to download the Section 63 BSA evidence bundle with embedded browser SHA-256 hash.
+5. **Consent Ledger:**
+   - View all installed apps and their granted permissions.
+   - Observe **RTO Challan** marked as `Frozen by E.D.I.T.H. (Score 0)`.
+   - Click **"Revoke"** or **"Restore"** on any app to see its trust score recalculate live.
+6. **Privacy Doppelganger:**
+   - Toggle **"Serve decoy data to frozen apps"**.
+   - See the side-by-side comparison: Real user identity (masked &amp; protected) vs Decoy data served to the scraper (154 canary contacts, &#8377;140 fake wallet balance).
+7. **About E.D.I.T.H.:**
+   - Review the complete problem statement, full rules table, and the Phase 1 vs Phase 2 roadmap.
 
 ---
 
-## 🧪 Verification & Health Check
+## 📱 9. How This Works on a Real Phone (Roadmap)
 
-```bash
-# Verify Next.js TypeScript Types
-npx tsc --noEmit
+### Phase 1: Pure User-Space App (Deployable Today)
+- Operates on standard, unmodified Android devices without root.
+- Uses Android `PackageInstaller` callbacks to detect APKs installed from WhatsApp or browser folders.
+- Displays high-contrast bilingual friction overlays before users grant risky permissions.
+- Monitors query volume anomalies via `ContentObserver` to detect mass SMS reads.
+- Compiles a tamper-evident Section 63 BSA incident log ready for submission to the 1930 portal.
 
-# Run Production Turbopack Build
-npm run build
+### Phase 2: OEM / Telco / OS Integration (Sovereign OS Partner)
+- Built directly into Android system ROMs (AOSP / BharOS / OEM firmware) with `MANAGE_APP_OPS_MODES` privileges.
+- Autonomous kernel kill-switch (`AppOpsManager.setMode` + `SIGSTOP`) to isolate rogue apps instantly.
+- Injects synthetic honeypot data at the Binder IPC boundary instead of null-pointer crashes.
+- Direct telco SIM baseband cross-verification of TRAI commercial headers before messages reach the inbox.
 
-# Test Backend Radar API
-curl -X POST http://localhost:5000/api/radar/simulate-step
-```
+*This prototype simulates the device and shows what both phases would do.*
 
 ---
 
-## 📜 License
-Developed under MIT License for Hackathon demonstration.
-*Disclaimer: Prototype telemetry simulator. Production deployment requires Android OEM / AppOps system privilege integration.*
+## 🔒 10. Privacy & Sovereign Guarantee
+
+- **No User Login:** No account, password, or registration required.
+- **No Data Collection:** Zero analytics, telemetry, or user inputs leave your machine.
+- **Open Source:** Available under the [MIT License](LICENSE) for independent review.

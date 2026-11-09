@@ -96,3 +96,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Suppress Next.js dev overlay indicators from covering the sidebar */
+[data-nextjs-dev-indicator],
+[data-nextjs-toast],
+nextjs-portal,
+#__next-build-watcher {
+  display: none !important;
+}
+

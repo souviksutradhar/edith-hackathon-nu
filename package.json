@@ -1,6 +1,7 @@
 {
-  "name": "my-project",
-  "version": "0.1.0",
+  "name": "edith-command-center",
+  "version": "1.0.0",
+  "description": "E.D.I.T.H. - Sovereign Mobile Cyber-Defense & Anti-Scam Command Center",
   "private": true,
   "packageManager": "pnpm@12.3.4",
   "scripts": {

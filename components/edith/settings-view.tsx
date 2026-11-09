@@ -76,12 +76,12 @@ const DEFAULT_POLICIES: ZeroTrustPolicy[] = [
   },
   {
     id: "chakshu-auto-dispatch",
-    label: "Automatic Sanchar Saathi / Chakshu Reporting (> 90% Risk)",
-    description: "Transmit evidence packet to DoT and NCRP 1930 when fraud probability exceeds 90%.",
+    label: "Sanchar Saathi / Chakshu Complaint Packet Preparation (> 90% Risk)",
+    description: "Prepare evidence packet for DoT and NCRP 1930 when fraud probability exceeds 90% (user files it).",
     enabled: true,
     category: "telecom",
     eventCount: 87,
-    eventLabel: "Packets Transmitted",
+    eventLabel: "Packets Prepared",
     mitigationHook: "SANCHAR_SAATHI_NCRP_1930",
     statutoryRef: "TRAI TCCCPR 2018 & DoT Circular",
   },
@@ -354,7 +354,7 @@ export function SettingsView() {
                   External Device Webhook &amp; Server-Sent Events (SSE)
                 </CardTitle>
                 <CardDescription className="text-xs text-zinc-400">
-                  Connect remote Android endpoints, OEM AppOps daemons, or honeypots to E.D.I.T.H.
+                  Connect remote Android endpoints and OEM AppOps daemons to E.D.I.T.H.
                 </CardDescription>
               </div>
             </div>
@@ -521,11 +521,11 @@ export function SettingsView() {
                 />
               </div>
               <p className="text-[11px] font-mono text-zinc-400">
-                {activeTestStep === 1 && "Target: Stage 5 Credential Harvester (PID 18492) -> Testing OEM Auto-Freeze..."}
-                {activeTestStep === 2 && "Target: 94% Risk Smishing Payload -> Testing Sanchar Saathi 1930 Dispatch..."}
+                {activeTestStep === 1 && "Target: Stage 5 Credential Harvester (Process: com.rto.echallan.quickpay) -> Testing OEM Auto-Freeze..."}
+                {activeTestStep === 2 && "Target: 94% Risk Smishing Payload -> Preparing Sanchar Saathi 1930 Evidence Packet (user files it)..."}
                 {activeTestStep === 3 && "Target: AnyDesk Screen Mirroring over PhonePe -> Testing FLAG_SECURE Blackout..."}
                 {activeTestStep === 4 && "Target: Untrusted Sideloaded APK Accessibility -> Testing AppOps Quarantine..."}
-                {activeTestStep === 5 && "Target: 15x Baseline Query Rate Anomaly on Contacts -> Testing eBPF Rate Limiter..."}
+                {activeTestStep === 5 && "Target: 15x Baseline Query Rate Anomaly on Contacts -> Testing Heuristic Rate Limiter..."}
               </p>
             </div>
           )}
