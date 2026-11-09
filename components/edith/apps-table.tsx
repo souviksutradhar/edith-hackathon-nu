@@ -48,10 +48,17 @@ interface AppsTableProps {
   apps: ConnectedApp[]
   query: string
   onManage: (app: ConnectedApp) => void
+  onModify?: (app: ConnectedApp) => void
   title?: string
 }
 
-export function AppsTable({ apps, query, onManage, title = "Connected Applications Monitoring" }: AppsTableProps) {
+export function AppsTable({
+  apps,
+  query,
+  onManage,
+  onModify,
+  title = "Connected Applications Monitoring",
+}: AppsTableProps) {
   const [filter, setFilter] = useState<Filter>("all")
 
   const visible = useMemo(() => {
@@ -164,9 +171,21 @@ export function AppsTable({ apps, query, onManage, title = "Connected Applicatio
                   <TrustBar score={app.trustScore} />
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button variant="outline" size="sm" onClick={() => onManage(app)}>
-                    Manage
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    {onModify && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => onModify(app)}
+                        disabled={app.status === "revoked"}
+                      >
+                        Modify Access
+                      </Button>
+                    )}
+                    <Button variant="outline" size="sm" onClick={() => onManage(app)}>
+                      Manage
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

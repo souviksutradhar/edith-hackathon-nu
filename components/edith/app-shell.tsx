@@ -5,8 +5,10 @@ import { toast } from "sonner"
 import { AccessLog } from "@/components/edith/access-log"
 import { AppInvestigation } from "@/components/edith/app-investigation"
 import { AppsTable } from "@/components/edith/apps-table"
+import { GlobalKillSwitch } from "@/components/edith/global-kill-switch"
 import { Header } from "@/components/edith/header"
 import { KpiCards } from "@/components/edith/kpi-cards"
+import { PermissionModal, type PermissionConfig } from "@/components/edith/permission-modal"
 import { RecommendationsView } from "@/components/edith/recommendations-view"
 import { SettingsView } from "@/components/edith/settings-view"
 import { Sidebar, type ViewId } from "@/components/edith/sidebar"
@@ -39,19 +41,25 @@ export function AppShell() {
   const [logs, setLogs] = useState<AccessLogEntry[]>(initialLogs)
   const [dismissed, setDismissed] = useState<string[]>([])
   const [investigatingId, setInvestigatingId] = useState<string | null>(null)
+  const [modifyingApp, setModifyingApp] = useState<ConnectedApp | null>(null)
+  const [lockdown, setLockdown] = useState(false)
+  const preLockdownApps = useRef<ConnectedApp[]>([])
   const logCounter = useRef(0)
 
-  const appendLog = useCallback((resource: string, result: AccessLogEntry["result"]) => {
+  const appendLog = useCallback(
+    (resource: string, result: AccessLogEntry["result"], app = "Resume Builder") => {
     logCounter.current += 1
     const entry: AccessLogEntry = {
       id: `live-${logCounter.current}`,
       time: formatTime(new Date()),
-      app: "Resume Builder",
+      app,
       resource,
       result,
     }
     setLogs((prev) => [...prev, entry].slice(-60))
-  }, [])
+    },
+    [],
+  )
 
   useEffect(() => {
     if (threat !== "active") return
@@ -96,6 +104,44 @@ export function AppShell() {
     }
     toast(`Managing ${app.name}`, {
       description: `${app.permissions.length} permission${app.permissions.length === 1 ? "" : "s"} granted · trust score ${app.trustScore}.`,
+    })
+  }
+
+  const handleActivateLockdown = () => {
+    preLockdownApps.current = apps
+    setLockdown(true)
+    setThreat("revoked")
+    setApps((prev) =>
+      prev.map((a) =>
+        a.id === "resume-builder"
+          ? { ...a, permissions: [], requestsPerHour: 0, spike: false, status: "revoked" }
+          : { ...a, requestsPerHour: 0, spike: false, status: "suspended" },
+      ),
+    )
+    appendLog("All third-party access", "Blocked", "All Apps")
+    toast.error("Global lockdown activated", {
+      description: "Every connected app has been suspended. Resume Builder access was revoked.",
+    })
+  }
+
+  const handleLiftLockdown = () => {
+    setLockdown(false)
+    setApps((prev) =>
+      prev.map((a) => (a.id === "resume-builder" ? a : (preLockdownApps.current.find((p) => p.id === a.id) ?? a))),
+    )
+    appendLog("Lockdown lifted", "Allowed", "All Apps")
+    toast.success("Lockdown lifted", {
+      description: "Trusted apps can connect again. Resume Builder remains revoked.",
+    })
+  }
+
+  const handleSavePermissions = (app: ConnectedApp, config: PermissionConfig) => {
+    const label = { always: "Always allowed", hour: "Allowed for 1 hour", deny: "Denied" } as const
+    setModifyingApp(null)
+    toast.success(`Permissions updated for ${app.name}`, {
+      description: (Object.keys(config) as (keyof PermissionConfig)[])
+        .map((key) => `${key}: ${label[config[key]]}`)
+        .join(" · "),
     })
   }
 
@@ -195,14 +241,32 @@ export function AppShell() {
 
           {view === "dashboard" && (
             <>
+              <GlobalKillSwitch
+                locked={lockdown}
+                onActivate={handleActivateLockdown}
+                onLift={handleLiftLockdown}
+              />
               <KpiCards criticalAlerts={criticalAlerts} trustScore={trustScore} />
               <ThreatAlert state={threat} onRevoke={handleRevoke} onSuspend={handleSuspend} />
-              <AppsTable apps={apps} query={query} onManage={handleManage} />
+              <AppsTable
+                apps={apps}
+                query={query}
+                onManage={handleManage}
+                onModify={setModifyingApp}
+              />
               <AccessLog logs={logs} query={query} />
             </>
           )}
 
-          {view === "apps" && <AppsTable apps={apps} query={query} onManage={handleManage} title="Connected Applications" />}
+          {view === "apps" && (
+            <AppsTable
+              apps={apps}
+              query={query}
+              onManage={handleManage}
+              onModify={setModifyingApp}
+              title="Connected Applications"
+            />
+          )}
 
           {view === "logs" && (
             <AccessLog logs={logs} query={query} heightClass="h-[32rem]" title="Activity Logs" />
@@ -221,6 +285,12 @@ export function AppShell() {
           )}
         </main>
       </div>
+
+      <PermissionModal
+        app={modifyingApp}
+        onClose={() => setModifyingApp(null)}
+        onSave={handleSavePermissions}
+      />
     </div>
   )
 }
