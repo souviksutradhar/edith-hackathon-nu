@@ -2,106 +2,132 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:is(.dark *));
+@theme {
+  --color-page: #F4F2FF;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #F9F8FF;
+  --color-border-token: #E6E1FA;
+  --color-divider: #EEEAFB;
+  --color-text-main: #15122B;
+  --color-text-muted: #5E5A7A;
 
-@theme inline {
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --color-foreground: var(--foreground);
-  --color-background: var(--background);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) * 1.4);
-  --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
-}
+  --color-primary: #5B35F5;
+  --color-primary-hover: #4A27D9;
+  --color-primary-tint: #ECE8FF;
+  --color-verdict: #1B1736;
 
-@theme inline {
-  --color-success: oklch(0.75 0.17 155);
-  --color-warning: oklch(0.82 0.16 85);
-  --color-danger: oklch(0.65 0.23 25);
-  --color-info: oklch(0.7 0.15 250);
+  --color-risk-safe-text: #12704A;
+  --color-risk-safe-tint: #E3F6EE;
+  --color-risk-safe-solid: #1E9E6A;
+
+  --color-risk-caution-text: #8A5A00;
+  --color-risk-caution-tint: #FFF1D6;
+  --color-risk-caution-solid: #D99A1E;
+
+  --color-risk-danger-text: #B42318;
+  --color-risk-danger-tint: #FDE8E6;
+  --color-risk-danger-solid: #D64545;
+
+  --color-track: #E9E5FB;
+  --color-switch-off: #CFC9EA;
+
+  --font-sans: var(--font-plus-jakarta), 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), 'JetBrains Mono', monospace;
+
+  --radius-card: 20px;
+  --radius-input: 12px;
+  --radius-pill: 9999px;
+
+  --shadow-primary-soft: 0 4px 14px rgba(91, 53, 245, 0.18);
 }
 
 :root {
-  color-scheme: dark;
-  --background: oklch(0.155 0.012 260);
-  --foreground: oklch(0.96 0.005 260);
-  --card: oklch(0.195 0.014 260);
-  --card-foreground: oklch(0.96 0.005 260);
-  --popover: oklch(0.21 0.015 260);
-  --popover-foreground: oklch(0.96 0.005 260);
-  --primary: oklch(0.65 0.18 255);
-  --primary-foreground: oklch(0.98 0 0);
-  --secondary: oklch(0.255 0.016 260);
-  --secondary-foreground: oklch(0.96 0.005 260);
-  --muted: oklch(0.25 0.015 260);
-  --muted-foreground: oklch(0.7 0.02 260);
-  --accent: oklch(0.27 0.02 260);
-  --accent-foreground: oklch(0.98 0 0);
-  --destructive: oklch(0.65 0.23 25);
-  --border: oklch(1 0 0 / 9%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.65 0.18 255);
-  --chart-1: oklch(0.65 0.18 255);
-  --chart-2: oklch(0.75 0.17 155);
-  --chart-3: oklch(0.82 0.16 85);
-  --chart-4: oklch(0.65 0.23 25);
-  --chart-5: oklch(0.7 0.1 300);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.175 0.013 260);
-  --sidebar-foreground: oklch(0.96 0.005 260);
-  --sidebar-primary: oklch(0.65 0.18 255);
-  --sidebar-primary-foreground: oklch(0.98 0 0);
-  --sidebar-accent: oklch(0.255 0.02 260);
-  --sidebar-accent-foreground: oklch(0.98 0 0);
-  --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.65 0.18 255);
+  color-scheme: light;
+  --background: #F4F2FF;
+  --foreground: #15122B;
+
+  --card: #FFFFFF;
+  --card-foreground: #15122B;
+
+  --popover: #FFFFFF;
+  --popover-foreground: #15122B;
+
+  --primary: #5B35F5;
+  --primary-foreground: #FFFFFF;
+
+  --secondary: #ECE8FF;
+  --secondary-foreground: #5B35F5;
+
+  --muted: #F9F8FF;
+  --muted-foreground: #5E5A7A;
+
+  --accent: #ECE8FF;
+  --accent-foreground: #5B35F5;
+
+  --destructive: #D64545;
+  --destructive-foreground: #FFFFFF;
+
+  --border: #E6E1FA;
+  --input: #E6E1FA;
+  --ring: #5B35F5;
+  --radius: 20px;
+
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #15122B;
+  --sidebar-primary: #5B35F5;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #ECE8FF;
+  --sidebar-accent-foreground: #5B35F5;
+  --sidebar-border: #E6E1FA;
+  --sidebar-ring: #5B35F5;
+
+  --success: #1E9E6A;
+  --warning: #D99A1E;
+  --danger: #D64545;
+  --info: #5B35F5;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    border-color: var(--border);
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: #15122B;
+    line-height: 1.2;
+  }
+  h2, h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #15122B;
   }
 }
 
-/* Suppress Next.js dev overlay indicators from covering the sidebar */
+/* Suppress Next.js dev overlay indicator and portals */
 [data-nextjs-dev-indicator],
 [data-nextjs-toast],
 nextjs-portal,
-#__next-build-watcher {
+#__next-build-watcher,
+.next-devtools {
   display: none !important;
 }
 
+/* Dedicated Print Stylesheet */
+@media print {
+  body {
+    background: #FFFFFF !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

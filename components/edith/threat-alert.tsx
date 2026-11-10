@@ -82,37 +82,33 @@ export function ThreatAlert({
     <section
       role="alert"
       aria-label="Active threat alert"
-      className="relative overflow-hidden rounded-xl border border-danger/60 bg-danger/10 p-5 shadow-[0_0_40px_-12px] shadow-danger/50 md:p-6"
+      className="relative overflow-hidden rounded-[20px] border border-[#D64545]/30 bg-[#FDE8E6]/60 p-5 md:p-6 shadow-none"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-24 -top-24 size-64 rounded-full bg-danger/20 blur-3xl"
-      />
       <div className="relative flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex gap-4">
-          <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-danger/20 text-danger ring-1 ring-danger/40">
-            <ShieldAlert className="size-6 animate-pulse" aria-hidden="true" />
+          <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/30">
+            <ShieldAlert className="size-6 animate-pulse text-[#B42318]" aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-danger px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#B42318] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
                 <span className="size-1.5 animate-pulse rounded-full bg-white" />
                 {threatLevel} Threat Detected
               </span>
-              <Badge variant="outline" className="border-danger/40 text-danger font-mono text-xs">
+              <Badge variant="outline" className="border-[#D64545]/30 text-[#B42318] font-mono text-xs rounded-full">
                 -{deduction} Trust Score
               </Badge>
               {isSuspended && (
-                <span className="inline-flex items-center gap-1 rounded-full bg-warning/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-warning">
+                <span className="inline-flex items-center gap-1 rounded-full bg-[#FFF1D6] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[#8A5A00]">
                   <PauseCircle className="size-3" aria-hidden="true" />
                   Suspended
                 </span>
               )}
             </div>
-            <h2 className="mt-2 text-lg font-semibold text-balance md:text-xl text-foreground">
+            <h2 className="mt-2 text-lg font-bold text-balance md:text-xl text-[#15122B]">
               Gemini Threat Detection: {threat?.targetApp || appName}
             </h2>
-            <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-pretty text-foreground/85">
+            <p className="mt-1.5 max-w-3xl text-sm leading-relaxed text-pretty text-[#5E5A7A]">
               {explanation}
             </p>
 
@@ -121,14 +117,14 @@ export function ThreatAlert({
               <button
                 type="button"
                 onClick={() => setShowJson((v) => !v)}
-                className="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground hover:text-foreground transition-colors"
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#5E5A7A] hover:text-[#15122B] transition-colors"
               >
                 <Code2 className="size-3.5" />
                 <span>{showJson ? "Hide Gemini Structured JSON" : "View Gemini Structured JSON Analysis"}</span>
                 {showJson ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
               </button>
               {showJson && (
-                <pre className="mt-2 max-w-2xl overflow-x-auto rounded-lg border border-border bg-black/80 p-3 font-mono text-xs text-emerald-400">
+                <pre className="mt-2 max-w-2xl overflow-x-auto rounded-[12px] border border-[#E6E1FA] bg-white p-3 font-mono text-xs text-[#15122B]">
                   {JSON.stringify(rawJson, null, 2)}
                 </pre>
               )}

@@ -39,9 +39,9 @@ export function ThreatModal({ threat, isOpen, onClose, onQuarantine, onRestore }
       role="dialog"
       aria-modal="true"
       aria-labelledby="threat-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#15122B]/40 p-4 backdrop-blur-sm animate-in fade-in duration-200"
     >
-      <div className="relative w-full max-w-2xl rounded-2xl border border-danger/60 bg-card p-6 shadow-2xl shadow-danger/25 md:p-8">
+      <div className="relative w-full max-w-2xl rounded-[20px] border border-[#E6E1FA] bg-white p-6 shadow-2xl md:p-8">
         {/* Glow accent */}
         <div
           aria-hidden="true"
@@ -117,11 +117,11 @@ export function ThreatModal({ threat, isOpen, onClose, onQuarantine, onRestore }
         </div>
 
         {/* Gemini Exact Structured JSON Viewer */}
-        <div className="mt-4 rounded-xl border border-border bg-black/60">
+        <div className="mt-4 rounded-xl border border-[#E6E1FA] bg-[#F9F8FF]">
           <button
             type="button"
             onClick={() => setShowJson((prev) => !prev)}
-            className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+            className="flex w-full items-center justify-between px-4 py-2.5 text-xs font-medium text-[#5E5A7A] hover:text-[#15122B]"
           >
             <span className="flex items-center gap-2 font-mono">
               <span>{`{ }`}</span> Gemini Structured JSON Output
@@ -132,16 +132,16 @@ export function ThreatModal({ threat, isOpen, onClose, onQuarantine, onRestore }
           </button>
 
           {showJson && (
-            <div className="relative border-t border-border/60 p-3">
+            <div className="relative border-t border-[#EEEAFB] p-3">
               <button
                 type="button"
                 onClick={handleCopy}
-                className="absolute right-5 top-5 inline-flex items-center gap-1 rounded bg-muted/80 px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground"
+                className="absolute right-5 top-5 inline-flex items-center gap-1 rounded bg-[#ECE8FF] px-2 py-1 text-[10px] text-[#5B35F5] hover:bg-[#ECE8FF]/80"
               >
-                {copied ? <CheckCircle2 className="size-3 text-success" /> : <Copy className="size-3" />}
+                {copied ? <CheckCircle2 className="size-3 text-[#12704A]" /> : <Copy className="size-3" />}
                 {copied ? "Copied" : "Copy"}
               </button>
-              <pre className="max-h-48 overflow-x-auto overflow-y-auto rounded-lg bg-black/80 p-3 font-mono text-xs text-emerald-400">
+              <pre className="max-h-48 overflow-x-auto overflow-y-auto rounded-lg bg-white border border-[#E6E1FA] p-3 font-mono text-xs text-[#15122B]">
                 {JSON.stringify(rawData, null, 2)}
               </pre>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ShieldCheck, Clock, Radio, Menu } from "lucide-react";
+import { ShieldCheck, Clock, Menu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -41,14 +41,14 @@ export function Header({ onMenuClick, isSseConnected = true }: HeaderProps) {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-zinc-800/80 bg-zinc-950/90 px-4 backdrop-blur-md md:px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-[#E6E1FA] bg-[#F4F2FF]/80 px-4 backdrop-blur-md md:px-6">
       {/* Left: Logo & System Status */}
       <div className="flex items-center gap-3">
         {onMenuClick && (
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-8 w-8 text-zinc-400 hover:text-zinc-100"
+            className="lg:hidden h-8 w-8 text-[#5E5A7A] hover:text-[#15122B]"
             onClick={onMenuClick}
             aria-label="Open menu"
           >
@@ -56,43 +56,30 @@ export function Header({ onMenuClick, isSseConnected = true }: HeaderProps) {
           </Button>
         )}
 
-        <div className="flex items-center gap-2.5">
-          <span className="font-mono text-base font-extrabold tracking-widest text-zinc-100">
-            E.D.I.T.H.
+        <div className="flex items-center gap-3">
+          <span className="text-base font-extrabold tracking-tight text-[#15122B]">
+            E.D.I.T.H. Command Center
           </span>
-          <Badge
-            variant="outline"
-            className="border-zinc-800 bg-zinc-900 text-[10px] font-mono text-zinc-400 font-semibold px-2 py-0.5 rounded"
-          >
-            DEMO PROTOTYPE
-          </Badge>
 
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded border border-zinc-800 bg-zinc-900/80 text-[11px] font-mono text-zinc-300">
-            <span
-              className={`size-1.5 rounded-full ${
-                isSseConnected ? "bg-emerald-400" : "bg-emerald-400"
-              }`}
-            />
-            <span className="text-[10px] uppercase font-bold tracking-wider text-emerald-400">
-              SOC ACTIVE
-            </span>
-          </div>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20 text-xs font-semibold">
+            <span className="size-1.5 rounded-full bg-[#1E9E6A]" />
+            SOC Active
+          </span>
         </div>
       </div>
 
-      {/* Right: Simulated Device Badge & 24h IST Clock */}
-      <div className="flex items-center gap-2 md:gap-3">
-        <Badge
-          variant="outline"
-          className="inline-flex items-center gap-1.5 border-amber-500/40 bg-amber-500/10 text-amber-300 text-[10px] font-mono px-2.5 py-0.5 font-semibold rounded"
-        >
-          <span className="size-1.5 rounded-full bg-amber-400 animate-pulse" />
-          SIMULATED DEVICE &middot; NO LOGIN &middot; NO DATA COLLECTED
-        </Badge>
+      {/* Right: Simulated Device Badge & IST Clock */}
+      <div className="flex items-center gap-3">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-[#ECE8FF] text-[#5B35F5] px-3 py-1 text-xs font-semibold">
+          <span className="size-1.5 rounded-full bg-[#5B35F5]" />
+          Simulated device
+        </span>
 
-        <div className="inline-flex items-center gap-1.5 border border-zinc-800 bg-zinc-900/80 px-2.5 py-1 rounded text-[11px] font-mono text-zinc-300">
-          <Clock className="size-3 text-zinc-500" />
-          <span suppressHydrationWarning>{mounted && timeStr.ist ? `${timeStr.ist} IST` : "--:--:-- IST"}</span>
+        <div className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-[#E6E1FA] bg-white px-3 py-1 text-xs font-medium text-[#5E5A7A]">
+          <Clock className="size-3 text-[#5E5A7A]" />
+          <span className="font-mono" suppressHydrationWarning>
+            {mounted && timeStr.ist ? `${timeStr.ist} IST` : "--:--:-- IST"}
+          </span>
         </div>
       </div>
     </header>

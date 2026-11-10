@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { toast } from "sonner"
-import { Loader2, Play, Radio, RotateCcw, Zap } from "lucide-react"
+import { ArrowRight, Loader2, Play, Radio, RotateCcw, Zap } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AboutView } from "@/components/edith/about-view"
@@ -102,7 +102,7 @@ function AppShellInner() {
   const [radarStage, setRadarStage] = useState<number>(0)
   const [dossier, setDossier] = useState<ComplaintDossier | null>(null)
   const [hinglishWarning, setHinglishWarning] = useState<string>(
-    "चेतावनी: 'RTO Challan QuickPay' ऐप आपके बैंक OTP और गोपनीय मैसेज पढ़ने की कोशिश कर रहा था। E.D.I.T.H. ने इस फ़ेक ऐप को तुरंत फ़्रीज़ (ब्लॉक) कर दिया है।"
+    "Warning: 'RTO Challan QuickPay' was caught attempting to read bank OTPs and confidential messages. E.D.I.T.H. froze the fake app immediately before any data was stolen."
   )
   const [showDossierModal, setShowDossierModal] = useState<boolean>(false)
 
@@ -594,9 +594,9 @@ function AppShellInner() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[#F4F2FF] text-[#15122B]">
       {/* Sidebar Navigation */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-sidebar-border lg:block">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-[#E6E1FA] lg:block bg-white">
         <Sidebar active={view} onNavigate={handleNavigate} recommendationCount={openRecommendations} />
       </aside>
 
@@ -614,13 +614,13 @@ function AppShellInner() {
           aria-label="Close navigation"
           onClick={() => setMenuOpen(false)}
           className={cn(
-            "absolute inset-0 bg-black/60 transition-opacity",
+            "absolute inset-0 bg-[#15122B]/40 transition-opacity",
             menuOpen ? "opacity-100" : "opacity-0",
           )}
         />
         <div
           className={cn(
-            "absolute inset-y-0 left-0 w-64 border-r border-sidebar-border transition-transform",
+            "absolute inset-y-0 left-0 w-64 border-r border-[#E6E1FA] bg-white transition-transform",
             menuOpen ? "translate-x-0" : "-translate-x-full",
           )}
         >
@@ -645,20 +645,20 @@ function AppShellInner() {
             view !== "privacy-doppelganger" &&
             view !== "doppelganger" &&
             view !== "logs" && (
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-zinc-800/80 pb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-[#E6E1FA] pb-4">
               <div>
-                <h1 className="text-xl font-bold tracking-tight text-zinc-100">{viewTitles[view]}</h1>
+                <h1 className="text-[28px] font-extrabold tracking-tight text-[#15122B]">{viewTitles[view]}</h1>
               </div>
 
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-3">
                 <Button
                   type="button"
                   size="sm"
                   variant="outline"
                   onClick={resetSimulation}
-                  className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-mono text-xs h-8 px-3"
+                  className="rounded-full border border-[#E6E1FA] bg-white hover:bg-[#ECE8FF] text-[#5B35F5] text-xs font-semibold h-9 px-4"
                 >
-                  <RotateCcw className="mr-1.5 size-3 text-zinc-400" />
+                  <RotateCcw className="mr-1.5 size-3.5 text-[#5B35F5]" />
                   Reset
                 </Button>
 
@@ -668,21 +668,22 @@ function AppShellInner() {
                   onClick={() => runSimulation()}
                   disabled={isRunning}
                   className={cn(
-                    "font-mono text-xs font-bold h-8 px-3.5 transition-all shadow-sm",
+                    "rounded-full text-xs font-semibold h-9 px-5 transition-all shadow-[0_4px_14px_rgba(91,53,245,0.18)]",
                     isRunning
-                      ? "bg-zinc-800 text-zinc-400 border border-zinc-700 cursor-not-allowed"
-                      : "bg-emerald-600 hover:bg-emerald-500 text-zinc-950 border border-emerald-500/80"
+                      ? "bg-[#ECE8FF] text-[#5E5A7A] cursor-not-allowed"
+                      : "bg-[#5B35F5] hover:bg-[#4A27D9] text-white"
                   )}
                 >
                   {isRunning ? (
                     <>
-                      <Loader2 className="mr-1.5 size-3 animate-spin text-emerald-400" />
+                      <Loader2 className="mr-1.5 size-3.5 animate-spin" />
                       Simulating...
                     </>
                   ) : (
                     <>
-                      <Play className="mr-1.5 size-3 fill-current" />
-                      Run Attack Simulation
+                      <Play className="mr-1.5 size-3.5 fill-current" />
+                      <span>Run Attack Simulation</span>
+                      <ArrowRight className="ml-1 size-3.5" />
                     </>
                   )}
                 </Button>

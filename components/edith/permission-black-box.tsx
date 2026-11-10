@@ -3,6 +3,7 @@
 import { useState } from "react"
 import {
   ArrowDownToLine,
+  ArrowRight,
   CheckCircle2,
   Clock,
   FileCode,
@@ -55,16 +56,16 @@ export function PermissionBlackBox() {
         demoSteps={[
           'Pick a scenario and click "Record a sample incident" to stream live events.',
           'Click "Verify evidence" to confirm the cryptographic chain is intact.',
-          'Click "Tamper with one event", then verify again to see the red tampering alert.',
+          'Click "Tamper with one event", then verify again to see the tampering alert.',
         ]}
       />
 
       {/* Control Toolbar */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-4 space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-6 space-y-4 shadow-none">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Scenario Selector & Record Button */}
-          <div className="flex flex-wrap items-center gap-2.5">
-            <span className="text-xs text-zinc-400 font-mono">Scenario:</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs text-[#5E5A7A] font-semibold">Scenario:</span>
             <select
               value={blackBoxScenario}
               onChange={(e) =>
@@ -73,7 +74,7 @@ export function PermissionBlackBox() {
                 )
               }
               disabled={isRecordingBlackBox}
-              className="bg-zinc-900 border border-zinc-700 text-zinc-200 text-xs rounded px-2.5 py-1.5 font-mono focus:outline-none focus:ring-1 focus:ring-cyan-500"
+              className="bg-white border border-[#E6E1FA] text-[#15122B] text-xs rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5B35F5]"
             >
               <option value="challan">Fake challan app (Traffic fine scam)</option>
               <option value="remote_screen">Remote screen app (Screen mirror Trojan)</option>
@@ -85,25 +86,26 @@ export function PermissionBlackBox() {
               size="sm"
               onClick={() => recordBlackBoxScenario(blackBoxScenario)}
               disabled={isRecordingBlackBox}
-              className="bg-cyan-600 hover:bg-cyan-500 text-zinc-950 font-mono text-xs font-bold h-8 px-3"
+              className="rounded-full bg-[#5B35F5] hover:bg-[#4A27D9] text-white text-xs font-semibold h-10 px-5 shadow-[0_4px_14px_rgba(91,53,245,0.18)] flex items-center gap-2"
             >
-              <Play className="mr-1.5 size-3 fill-current" />
-              {isRecordingBlackBox ? "Recording events..." : "Record a sample incident"}
+              <Play className="size-3.5 fill-current" />
+              <span>{isRecordingBlackBox ? "Recording events..." : "Record a sample incident"}</span>
+              <ArrowRight className="size-3.5" />
             </Button>
           </div>
 
           {/* Verification & Tamper Controls */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2.5">
             <Button
               type="button"
               size="sm"
               variant="outline"
               onClick={tamperBlackBoxEvent}
               disabled={isRecordingBlackBox || blackBoxEvents.length < 3}
-              className="border-amber-700/60 bg-amber-950/30 hover:bg-amber-950/60 text-amber-300 font-mono text-xs h-8 px-3"
+              className="rounded-full border border-[#D99A1E]/30 bg-white hover:bg-[#FFF1D6] text-[#8A5A00] text-xs font-semibold h-9 px-4"
             >
-              <TriangleAlert className="mr-1.5 size-3 text-amber-400" />
-              Tamper with one event (Demo)
+              <TriangleAlert className="mr-1.5 size-3.5 text-[#D99A1E]" />
+              Tamper with one event
             </Button>
 
             <Button
@@ -111,7 +113,7 @@ export function PermissionBlackBox() {
               size="sm"
               onClick={verifyBlackBoxEvidence}
               disabled={isRecordingBlackBox || blackBoxEvents.length === 0}
-              className="bg-zinc-100 hover:bg-white text-zinc-950 font-mono text-xs font-bold h-8 px-3"
+              className="rounded-full bg-[#5B35F5] hover:bg-[#4A27D9] text-white text-xs font-semibold h-9 px-4 shadow-sm"
             >
               <ShieldCheck className="mr-1.5 size-3.5" />
               Verify evidence
@@ -123,9 +125,9 @@ export function PermissionBlackBox() {
               variant="outline"
               onClick={exportBlackBoxJson}
               disabled={blackBoxEvents.length === 0}
-              className="border-zinc-800 bg-zinc-900 hover:bg-zinc-800 text-zinc-300 font-mono text-xs h-8 px-3"
+              className="rounded-full border border-[#E6E1FA] bg-white hover:bg-[#ECE8FF] text-[#5B35F5] text-xs font-semibold h-9 px-4"
             >
-              <ArrowDownToLine className="mr-1.5 size-3 text-zinc-400" />
+              <ArrowDownToLine className="mr-1.5 size-3.5" />
               Export evidence (JSON)
             </Button>
           </div>
@@ -135,25 +137,25 @@ export function PermissionBlackBox() {
         {verificationResult && (
           <div
             className={cn(
-              "p-3 rounded-lg border flex items-center justify-between text-xs font-mono transition-all",
+              "p-4 rounded-[16px] border flex items-center justify-between text-xs transition-all",
               verificationResult.isValid
-                ? "border-emerald-700/80 bg-emerald-950/40 text-emerald-300"
-                : "border-rose-700/80 bg-rose-950/50 text-rose-300 animate-pulse"
+                ? "border-[#1E9E6A]/30 bg-[#E3F6EE] text-[#12704A]"
+                : "border-[#D64545]/30 bg-[#FDE8E6] text-[#B42318] animate-pulse"
             )}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               {verificationResult.isValid ? (
-                <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="size-5 text-[#1E9E6A] shrink-0" />
               ) : (
-                <ShieldAlert className="size-4 text-rose-400 shrink-0" />
+                <ShieldAlert className="size-5 text-[#D64545] shrink-0" />
               )}
-              <span className="font-bold">
+              <span className="font-bold text-sm">
                 {verificationResult.isValid
                   ? "Evidence intact - no tampering detected"
                   : `Evidence was changed at event #${verificationResult.failedIndex}`}
               </span>
             </div>
-            <span className="text-[11px] opacity-80">
+            <span className="text-xs opacity-90 hidden sm:inline">
               {verificationResult.isValid
                 ? "Cryptographic SHA-256 chain recomputed successfully across all entries."
                 : "Hash mismatch detected. Downstream forensic integrity invalidated."}
@@ -163,11 +165,11 @@ export function PermissionBlackBox() {
 
         {/* Replay Scrubbing Slider */}
         {blackBoxEvents.length > 0 && (
-          <div className="pt-2 border-t border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
-            <div className="flex items-center gap-2 text-zinc-300">
-              <Sliders className="size-3.5 text-cyan-400" />
-              <span>Replay slider:</span>
-              <span className="text-cyan-400 font-bold">
+          <div className="pt-3 border-t border-[#EEEAFB] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-2 text-[#15122B]">
+              <Sliders className="size-4 text-[#5B35F5]" />
+              <span className="font-semibold">Replay slider:</span>
+              <span className="text-[#5B35F5] font-bold">
                 {replayStep !== null ? `Event ${replayStep} of ${blackBoxEvents.length}` : `All ${blackBoxEvents.length} events`}
               </span>
             </div>
@@ -179,13 +181,13 @@ export function PermissionBlackBox() {
                 max={blackBoxEvents.length}
                 value={replayStep ?? blackBoxEvents.length}
                 onChange={(e) => setReplayStep(Number(e.target.value))}
-                className="w-full accent-cyan-400 h-1.5 bg-zinc-800 rounded-lg cursor-pointer"
+                className="w-full accent-[#5B35F5] h-1.5 bg-[#E6E1FA] rounded-full cursor-pointer"
               />
               {replayStep !== null && (
                 <button
                   type="button"
                   onClick={() => setReplayStep(null)}
-                  className="text-[11px] text-zinc-400 hover:text-zinc-200 underline whitespace-nowrap"
+                  className="text-xs text-[#5B35F5] hover:underline whitespace-nowrap font-semibold cursor-pointer"
                 >
                   Show All
                 </button>
@@ -196,30 +198,30 @@ export function PermissionBlackBox() {
       </div>
 
       {/* Main Table or Empty State */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden font-mono text-xs">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white overflow-hidden shadow-none">
         {blackBoxEvents.length === 0 ? (
           <div className="py-16 text-center space-y-2">
-            <Clock className="size-8 text-zinc-600 mx-auto" />
-            <p className="text-xs text-zinc-400 font-semibold">
+            <Clock className="size-8 text-[#5E5A7A]/40 mx-auto" />
+            <p className="text-sm text-[#15122B] font-semibold">
               Run the demo to see activity here
             </p>
-            <p className="text-[11px] text-zinc-600">
+            <p className="text-xs text-[#5E5A7A]">
               Pick a scenario above and click &quot;Record a sample incident&quot; to stream tamper-proof events.
             </p>
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-zinc-900/80 border-b border-zinc-800 text-zinc-400 uppercase text-[10px]">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead className="bg-[#F9F8FF] border-b border-[#EEEAFB] text-[#5E5A7A] text-[13px] font-semibold">
                 <tr>
-                  <th className="py-2.5 px-3 font-bold w-12 text-center">#</th>
-                  <th className="py-2.5 px-3 font-bold w-24">Time (IST)</th>
-                  <th className="py-2.5 px-3 font-bold">Application &amp; Action</th>
-                  <th className="py-2.5 px-3 font-bold">Event Details</th>
-                  <th className="py-2.5 px-3 font-bold w-28 text-right">SHA-256 Hash</th>
+                  <th className="py-3 px-4 w-12 text-center">#</th>
+                  <th className="py-3 px-4 w-28">Time (IST)</th>
+                  <th className="py-3 px-4">Application &amp; Action</th>
+                  <th className="py-3 px-4">Event Details</th>
+                  <th className="py-3 px-4 w-32 text-right">SHA-256 Hash</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/60">
+              <tbody className="divide-y divide-[#EEEAFB]">
                 {displayedEvents.map((evt) => {
                   const isTampered = tamperedIndex === evt.index
                   const isFailedVerification =
@@ -237,59 +239,59 @@ export function PermissionBlackBox() {
                     <tr
                       key={evt.id}
                       className={cn(
-                        "hover:bg-zinc-900/40 transition-colors",
+                        "h-[52px] hover:bg-[#F9F8FF] transition-colors",
                         isFailedVerification
-                          ? "bg-rose-950/40 border-l-2 border-l-rose-500"
+                          ? "bg-[#FDE8E6]/60 border-l-4 border-l-[#D64545]"
                           : isTampered
-                          ? "bg-amber-950/20"
+                          ? "bg-[#FFF1D6]/40"
                           : ""
                       )}
                     >
-                      <td className="py-2.5 px-3 text-center text-zinc-500 font-bold">
+                      <td className="py-3 px-4 text-center text-[#5E5A7A] font-bold text-xs">
                         {evt.index}
                       </td>
-                      <td className="py-2.5 px-3 text-zinc-400 whitespace-nowrap">
+                      <td className="py-3 px-4 text-[#5E5A7A] text-xs whitespace-nowrap font-mono">
                         {evt.timestamp}
                       </td>
-                      <td className="py-2.5 px-3 font-semibold text-zinc-200">
-                        <div className="flex items-center gap-1.5">
+                      <td className="py-3 px-4 font-semibold text-[#15122B]">
+                        <div className="flex items-center gap-2">
                           <span>{evt.app}</span>
                           <span
                             className={cn(
-                              "px-1.5 py-0.2 rounded text-[9px] font-bold border",
+                              "px-2 py-0.5 rounded-full text-[10px] font-bold",
                               isCritical
-                                ? "border-rose-800 bg-rose-950/60 text-rose-300"
+                                ? "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/20"
                                 : isWarning
-                                ? "border-amber-800 bg-amber-950/60 text-amber-300"
+                                ? "bg-[#FFF1D6] text-[#8A5A00] border border-[#D99A1E]/20"
                                 : isSuccess
-                                ? "border-emerald-800 bg-emerald-950/60 text-emerald-300"
-                                : "border-zinc-800 bg-zinc-900 text-zinc-400"
+                                ? "bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20"
+                                : "bg-[#F9F8FF] text-[#5E5A7A] border border-[#E6E1FA]"
                             )}
                           >
                             {evt.action}
                           </span>
                         </div>
-                        <div className="text-[10px] text-zinc-500 font-normal">{evt.process}</div>
+                        <div className="text-xs text-[#5E5A7A] font-normal">{evt.process}</div>
                       </td>
-                      <td className="py-2.5 px-3 text-zinc-300">
+                      <td className="py-3 px-4 text-xs text-[#15122B]">
                         <div
                           className={cn(
                             "leading-relaxed",
-                            isTampered ? "text-amber-300 font-bold underline" : ""
+                            isTampered ? "text-[#8A5A00] font-bold underline" : ""
                           )}
                         >
                           {evt.details}
                         </div>
                         {isTampered && (
-                          <span className="text-[10px] text-amber-400 block font-semibold">
+                          <span className="text-[11px] text-[#B42318] block font-semibold mt-0.5">
                             &uarr; [Tampered text: hash no longer matches original signature]
                           </span>
                         )}
                       </td>
-                      <td className="py-2.5 px-3 text-right whitespace-nowrap">
+                      <td className="py-3 px-4 text-right whitespace-nowrap">
                         <span
                           title={evt.hash}
-                          className="px-2 py-0.5 rounded bg-zinc-900 border border-zinc-800 text-[10px] text-zinc-400 font-mono"
+                          className="px-2.5 py-1 rounded-full bg-[#ECE8FF] text-[#5B35F5] border border-[#5B35F5]/20 text-[11px] font-mono font-semibold"
                         >
                           {shortHash}
                         </span>
@@ -304,7 +306,7 @@ export function PermissionBlackBox() {
       </div>
 
       {/* Statutory Footer */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-zinc-500 font-mono gap-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-[#5E5A7A] gap-2 pt-1">
         <span>Standard: Electronic Record Certificate aligned with BSA Sec. 63</span>
         <span>Every row includes previous row&apos;s SHA-256 hash</span>
       </div>

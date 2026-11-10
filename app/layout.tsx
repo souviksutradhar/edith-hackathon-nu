@@ -1,7 +1,22 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
+import { Plus_Jakarta_Sans, JetBrains_Mono } from 'next/font/google'
 import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-plus-jakarta',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'E.D.I.T.H. | Permission Management Dashboard',
@@ -28,8 +43,8 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'dark',
-  themeColor: '#14161c',
+  colorScheme: 'light',
+  themeColor: '#F4F2FF',
 }
 
 export default function RootLayout({
@@ -38,10 +53,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className="antialiased" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${plusJakarta.variable} ${jetbrainsMono.variable} font-sans`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased bg-[#F4F2FF] text-[#15122B]" suppressHydrationWarning>
         {children}
-        <Toaster theme="dark" position="top-right" />
+        <Toaster theme="light" position="top-right" />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

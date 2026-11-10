@@ -65,9 +65,9 @@ ${dossier.victimGuidance}
       role="dialog"
       aria-modal="true"
       aria-labelledby="dossier-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/85 p-3 md:p-6 backdrop-blur-md animate-in fade-in duration-200"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#15122B]/40 p-3 md:p-6 backdrop-blur-sm animate-in fade-in duration-200"
     >
-      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card p-5 md:p-7 shadow-2xl">
+      <div className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-[20px] border border-[#E6E1FA] bg-white p-5 md:p-7 shadow-2xl">
         {/* Close Button */}
         <button
           type="button"
@@ -236,7 +236,7 @@ ${dossier.victimGuidance}
               className="bg-primary text-primary-foreground text-xs font-bold shadow"
             >
               {copied ? <Check className="size-3.5 mr-1.5" /> : <Copy className="size-3.5 mr-1.5" />}
-              {copied ? "Copied to Clipboard" : "Copy FIR Draft (1930)"}
+              {copied ? "Copied to Clipboard" : "Copy Complaint Draft (1930)"}
             </Button>
           </div>
         </div>

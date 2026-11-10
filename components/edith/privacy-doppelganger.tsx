@@ -55,36 +55,33 @@ export function PrivacyDoppelganger() {
       />
 
       {/* Main Control Panel */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-5 space-y-4">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-6 space-y-4 shadow-none">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <Ghost className="size-5 text-purple-400" />
-              <h2 className="text-base font-bold text-zinc-100 uppercase tracking-wide">
+            <div className="flex items-center gap-2.5">
+              <Ghost className="size-5 text-[#5B35F5]" />
+              <h2 className="text-base font-bold text-[#15122B]">
                 Privacy Doppelganger Engine
               </h2>
-              <Badge
-                variant="outline"
-                className="border-purple-500/40 bg-purple-950/40 text-purple-300 text-xs font-mono px-2 py-0.5"
-              >
-                Concept demo with sample data
-              </Badge>
+              <span className="rounded-full bg-[#ECE8FF] text-[#5B35F5] border border-[#5B35F5]/20 text-[11px] font-semibold px-2.5 py-0.5">
+                Concept demo
+              </span>
             </div>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-[#5E5A7A]">
               When enabled, rogue read queries receive realistic synthetic data with embedded carrier tripwires.
             </p>
           </div>
 
           {/* Main Switch: Decoy Protection ON/OFF */}
-          <div className="flex items-center gap-3 bg-zinc-900/90 border border-zinc-800 px-4 py-2.5 rounded-lg shrink-0">
+          <div className="flex items-center gap-3 bg-[#F9F8FF] border border-[#E6E1FA] px-4 py-2.5 rounded-full shrink-0">
             <div className="text-right">
-              <div className="text-xs font-bold text-zinc-200 font-mono">
+              <div className="text-xs font-bold text-[#15122B]">
                 Decoy protection
               </div>
               <div
                 className={cn(
-                  "text-[10px] font-mono font-bold",
-                  decoyEnabled ? "text-emerald-400" : "text-rose-400"
+                  "text-[10px] font-bold",
+                  decoyEnabled ? "text-[#12704A]" : "text-[#B42318]"
                 )}
               >
                 {decoyEnabled ? "ACTIVE (PROTECTED)" : "DISABLED (EXPOSED)"}
@@ -98,12 +95,12 @@ export function PrivacyDoppelganger() {
               onClick={() => setDecoyEnabled(!decoyEnabled)}
               className={cn(
                 "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                decoyEnabled ? "bg-purple-600" : "bg-zinc-700"
+                decoyEnabled ? "bg-[#5B35F5]" : "bg-[#CFC9EA]"
               )}
             >
               <span
                 className={cn(
-                  "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                  "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
                   decoyEnabled ? "translate-x-5" : "translate-x-0"
                 )}
               />
@@ -112,11 +109,11 @@ export function PrivacyDoppelganger() {
         </div>
 
         {/* Read Counter & Simulator Buttons */}
-        <div className="pt-3 border-t border-zinc-800/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="pt-4 border-t border-[#EEEAFB] flex flex-col md:flex-row md:items-center justify-between gap-3">
           {/* Read Counter Badge */}
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <span className="text-zinc-400">Decoy reads served:</span>
-            <span className="px-2 py-0.5 rounded bg-purple-950 border border-purple-700/60 text-purple-300 font-bold">
+          <div className="flex items-center gap-2 text-xs">
+            <span className="text-[#5E5A7A]">Decoy reads served:</span>
+            <span className="px-3 py-1 rounded-full bg-[#ECE8FF] text-[#5B35F5] font-bold font-mono">
               {decoyReadsCount}
             </span>
           </div>
@@ -126,7 +123,7 @@ export function PrivacyDoppelganger() {
             <select
               value={selectedAppId}
               onChange={(e) => setSelectedAppId(e.target.value)}
-              className="bg-zinc-900 border border-zinc-700 text-zinc-200 text-xs rounded px-2.5 py-1.5 font-mono focus:outline-none"
+              className="bg-white border border-[#E6E1FA] text-[#15122B] text-xs rounded-full px-3.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#5B35F5]"
             >
               {apps.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -142,7 +139,7 @@ export function PrivacyDoppelganger() {
                   e.target.value as "Contacts" | "Location" | "Bank balance"
                 )
               }
-              className="bg-zinc-900 border border-zinc-700 text-zinc-200 text-xs rounded px-2.5 py-1.5 font-mono focus:outline-none"
+              className="bg-white border border-[#E6E1FA] text-[#15122B] text-xs rounded-full px-3.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-[#5B35F5]"
             >
               <option value="Contacts">Contacts</option>
               <option value="Location">Location</option>
@@ -153,7 +150,7 @@ export function PrivacyDoppelganger() {
               type="button"
               size="sm"
               onClick={() => simulateAppReadsData(selectedAppId, selectedDataType)}
-              className="bg-purple-600 hover:bg-purple-500 text-white font-mono text-xs font-bold h-8 px-3"
+              className="rounded-full bg-[#5B35F5] hover:bg-[#4A27D9] text-white text-xs font-semibold h-9 px-4 shadow-[0_4px_14px_rgba(91,53,245,0.18)]"
             >
               <Play className="mr-1.5 size-3 fill-current" />
               Simulate: app tries to read my data
@@ -164,9 +161,9 @@ export function PrivacyDoppelganger() {
               size="sm"
               variant="outline"
               onClick={() => simulateDecoyTripwire(selectedAppId)}
-              className="border-rose-800/80 bg-rose-950/40 hover:bg-rose-950 text-rose-300 font-mono text-xs h-8 px-3"
+              className="rounded-full border border-[#D64545]/30 bg-white hover:bg-[#FDE8E6] text-[#B42318] text-xs font-semibold h-9 px-4"
             >
-              <PhoneCall className="mr-1.5 size-3 text-rose-400" />
+              <PhoneCall className="mr-1.5 size-3 text-[#D64545]" />
               Simulate: scammer uses a decoy contact
             </Button>
           </div>
@@ -175,87 +172,84 @@ export function PrivacyDoppelganger() {
 
       {/* Tripwire Alert Banner */}
       {decoyTripwireAlert && (
-        <div className="rounded-lg border border-rose-600 bg-rose-950/40 p-4 space-y-2 font-mono">
+        <div className="rounded-[16px] border border-[#D64545]/30 bg-[#FDE8E6]/50 p-5 space-y-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-rose-300 font-bold text-sm">
-              <PhoneCall className="size-4 text-rose-400 animate-pulse" />
+            <div className="flex items-center gap-2 text-[#B42318] font-bold text-sm">
+              <PhoneCall className="size-4 text-[#D64545] animate-pulse" />
               <span>TRIPWIRE ALARM: Extortion Call Detected on Decoy Line</span>
             </div>
             <button
               type="button"
               onClick={dismissTripwireAlert}
-              className="text-xs text-rose-400 hover:text-rose-200 underline"
+              className="text-xs text-[#B42318] hover:underline font-semibold cursor-pointer"
             >
               Dismiss
             </button>
           </div>
 
-          <p className="text-xs text-rose-200 leading-relaxed">
+          <p className="text-xs text-[#15122B] leading-relaxed">
             Decoy contact <strong>&quot;{decoyTripwireAlert.decoyName}&quot;</strong> ({decoyTripwireAlert.decoyPhone}) just received an extortion call from {decoyTripwireAlert.scammerOrigin}. This independently confirms that <strong>{decoyTripwireAlert.appName}</strong> exfiltrated your address book to a scam syndicate.
           </p>
 
-          <p className="text-[11px] text-zinc-400 pt-1 border-t border-rose-900/60">
+          <p className="text-[11px] text-[#5E5A7A] pt-2 border-t border-[#D64545]/20">
             Tripwire explained: We plant unique decoy numbers in your phone that only this app received; when scammers call that number, we have indisputable proof of who leaked it.
           </p>
         </div>
       )}
 
       {/* Two Columns: Real Data (Hidden) vs What the App Received */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 font-mono text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
         {/* Column 1: Your Real Data (Hidden) */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+        <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-6 space-y-4 shadow-none">
+          <div className="flex items-center justify-between border-b border-[#EEEAFB] pb-3">
             <div className="flex items-center gap-2">
-              <Lock className="size-4 text-emerald-400" />
-              <span className="text-xs font-bold text-zinc-200 uppercase tracking-wide">
+              <Lock className="size-4 text-[#1E9E6A]" />
+              <span className="text-xs font-bold text-[#15122B] uppercase tracking-wide">
                 Your real data (hidden)
               </span>
             </div>
-            <Badge
-              variant="outline"
-              className="border-emerald-700 bg-emerald-950/60 text-emerald-300 text-[10px]"
-            >
+            <span className="rounded-full bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20 text-[10px] font-semibold px-2.5 py-0.5">
               Masked with padlock
-            </Badge>
+            </span>
           </div>
 
           <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900">
-              <span className="text-zinc-400 flex items-center gap-1.5">
-                <Lock className="size-3 text-zinc-500" />
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A] flex items-center gap-1.5">
+                <Lock className="size-3 text-[#5E5A7A]" />
                 Real Address Book
               </span>
-              <span className="text-zinc-400 font-semibold">
+              <span className="text-[#15122B] font-semibold">
                 382 Contacts (Masked: Priya S., Vikram M., Rajesh K., ...)
               </span>
             </div>
 
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900">
-              <span className="text-zinc-400 flex items-center gap-1.5">
-                <Lock className="size-3 text-zinc-500" />
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A] flex items-center gap-1.5">
+                <Lock className="size-3 text-[#5E5A7A]" />
                 Real Bank Balance
               </span>
-              <span className="text-zinc-400 font-semibold">
+              <span className="text-[#15122B] font-semibold">
                 &#8377;48,250.00 (Protected)
               </span>
             </div>
 
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900">
-              <span className="text-zinc-400 flex items-center gap-1.5">
-                <Lock className="size-3 text-zinc-500" />
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A] flex items-center gap-1.5">
+                <Lock className="size-3 text-[#5E5A7A]" />
                 Real Home Location
               </span>
-              <span className="text-zinc-400 font-semibold">
+              <span className="text-[#15122B] font-semibold">
                 28.6139&deg; N, 77.2090&deg; E (Masked)
               </span>
             </div>
 
             <div className="flex justify-between items-center py-2">
-              <span className="text-zinc-400 flex items-center gap-1.5">
-                <Lock className="size-3 text-zinc-500" />
+              <span className="text-[#5E5A7A] flex items-center gap-1.5">
+                <Lock className="size-3 text-[#5E5A7A]" />
                 Hardware IMEI
               </span>
-              <span className="text-zinc-500 font-semibold">
+              <span className="text-[#5E5A7A] font-semibold font-mono">
                 864921049281729 (BLOCKED)
               </span>
             </div>
@@ -265,49 +259,43 @@ export function PrivacyDoppelganger() {
         {/* Column 2: What the App Received */}
         <div
           className={cn(
-            "rounded-lg border p-5 space-y-4 transition-all",
+            "rounded-[20px] border p-6 space-y-4 transition-all shadow-none bg-white",
             decoyEnabled
-              ? "border-purple-800/60 bg-purple-950/10"
-              : "border-rose-800/60 bg-rose-950/20"
+              ? "border-[#5B35F5]/30 bg-[#ECE8FF]/20"
+              : "border-[#D64545]/30 bg-[#FDE8E6]/20"
           )}
         >
-          <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
+          <div className="flex items-center justify-between border-b border-[#EEEAFB] pb-3">
             <div className="flex items-center gap-2">
               {decoyEnabled ? (
-                <Ghost className="size-4 text-purple-400" />
+                <Ghost className="size-4 text-[#5B35F5]" />
               ) : (
-                <AlertTriangle className="size-4 text-rose-400" />
+                <AlertTriangle className="size-4 text-[#D64545]" />
               )}
-              <span
-                className={cn(
-                  "text-xs font-bold uppercase tracking-wide",
-                  decoyEnabled ? "text-purple-200" : "text-rose-200"
-                )}
-              >
+              <span className="text-xs font-bold uppercase tracking-wide text-[#15122B]">
                 What the app received
               </span>
             </div>
 
-            <Badge
-              variant="outline"
+            <span
               className={cn(
-                "text-[10px]",
+                "text-[10px] rounded-full px-2.5 py-0.5 font-bold",
                 decoyEnabled
-                  ? "border-purple-600 bg-purple-900/50 text-purple-300"
-                  : "border-rose-600 bg-rose-900/50 text-rose-300 font-bold"
+                  ? "bg-[#ECE8FF] text-[#5B35F5] border border-[#5B35F5]/20"
+                  : "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/20"
               )}
             >
               {decoyEnabled ? "Synthetic decoy data" : "Real data exposed"}
-            </Badge>
+            </span>
           </div>
 
           <div className="space-y-3">
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900/60">
-              <span className="text-zinc-400">Contacts Data</span>
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A]">Contacts Data</span>
               <span
                 className={cn(
                   "font-bold text-right",
-                  decoyEnabled ? "text-emerald-400" : "text-rose-400"
+                  decoyEnabled ? "text-[#12704A]" : "text-[#B42318]"
                 )}
               >
                 {decoyEnabled
@@ -316,38 +304,38 @@ export function PrivacyDoppelganger() {
               </span>
             </div>
 
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900/60">
-              <span className="text-zinc-400">Wallet Balance</span>
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A]">Wallet Balance</span>
               <span
                 className={cn(
                   "font-bold text-right",
-                  decoyEnabled ? "text-emerald-400" : "text-rose-400"
+                  decoyEnabled ? "text-[#12704A]" : "text-[#B42318]"
                 )}
               >
                 {decoyEnabled ? "\u20b9140.00 (Synthetic dummy)" : "\u20b948,250.00 EXPOSED"}
               </span>
             </div>
 
-            <div className="flex justify-between items-center py-2 border-b border-zinc-900/60">
-              <span className="text-zinc-400">Location GPS</span>
+            <div className="flex justify-between items-center py-2 border-b border-[#EEEAFB]">
+              <span className="text-[#5E5A7A]">Location GPS</span>
               <span
                 className={cn(
                   "font-bold text-right",
-                  decoyEnabled ? "text-emerald-400" : "text-rose-400"
+                  decoyEnabled ? "text-[#12704A]" : "text-[#B42318]"
                 )}
               >
                 {decoyEnabled
-                  ? "28.6129\u00b0 N, 77.2295\u00b0 E (City-center landmark)"
+                  ? "28.6129\u00b0 N, 77.2295\u00b0 E (City landmark)"
                   : "Exact Home Coordinates EXPOSED"}
               </span>
             </div>
 
             <div className="flex justify-between items-center py-2">
-              <span className="text-zinc-400">Tripwire Status</span>
+              <span className="text-[#5E5A7A]">Tripwire Status</span>
               <span
                 className={cn(
                   "font-bold",
-                  decoyEnabled ? "text-purple-300" : "text-zinc-500"
+                  decoyEnabled ? "text-[#5B35F5]" : "text-[#5E5A7A]"
                 )}
               >
                 {decoyEnabled ? "ARMED (Carrier Listening)" : "DISABLED"}
@@ -358,48 +346,48 @@ export function PrivacyDoppelganger() {
       </div>
 
       {/* Synthetic Canary Records Table */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-5 space-y-3 font-mono text-xs">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-bold text-zinc-200 uppercase tracking-wide">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-6 space-y-4 shadow-none text-xs">
+        <div className="flex items-center justify-between border-b border-[#EEEAFB] pb-3">
+          <h4 className="text-xs font-bold text-[#15122B] uppercase tracking-wide">
             Sample Synthetic Decoy Contacts Seeded in Sandbox
           </h4>
-          <span className="text-[11px] text-zinc-500">Showing 3 of 154 decoy records</span>
+          <span className="text-[11px] text-[#5E5A7A]">Showing 3 of 154 decoy records</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
-            <thead className="border-b border-zinc-800 text-zinc-500 uppercase text-[10px]">
+            <thead className="border-b border-[#EEEAFB] text-[#5E5A7A] uppercase text-[10px] bg-[#F9F8FF]">
               <tr>
-                <th className="py-2">Synthetic Name</th>
-                <th className="py-2">Decoy Phone</th>
-                <th className="py-2">Decoy Token ID</th>
-                <th className="py-2 text-right">Carrier Tripwire Status</th>
+                <th className="py-2.5 px-3">Synthetic Name</th>
+                <th className="py-2.5 px-3">Decoy Phone</th>
+                <th className="py-2.5 px-3">Decoy Token ID</th>
+                <th className="py-2.5 px-3 text-right">Carrier Tripwire Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-900">
-              <tr>
-                <td className="py-2.5 text-zinc-300">Aarav Sharma (Personal)</td>
-                <td className="py-2.5 text-zinc-400">+91 99990 12841</td>
-                <td className="py-2.5 text-purple-300 font-bold">DECOY-TRIP-084</td>
-                <td className="py-2.5 text-right text-emerald-400">ACTIVE LISTENER</td>
+            <tbody className="divide-y divide-[#EEEAFB]">
+              <tr className="h-[48px]">
+                <td className="py-2.5 px-3 text-[#15122B] font-medium">Aarav Sharma (Personal)</td>
+                <td className="py-2.5 px-3 text-[#5E5A7A] font-mono">+91 99990 12841</td>
+                <td className="py-2.5 px-3 text-[#5B35F5] font-bold font-mono">DECOY-TRIP-084</td>
+                <td className="py-2.5 px-3 text-right text-[#12704A] font-semibold">ACTIVE LISTENER</td>
               </tr>
-              <tr>
-                <td className="py-2.5 text-zinc-300">Pooja Verma (Work)</td>
-                <td className="py-2.5 text-zinc-400">+91 99990 77192</td>
-                <td className="py-2.5 text-purple-300 font-bold">DECOY-TRIP-085</td>
-                <td className="py-2.5 text-right text-emerald-400">ACTIVE LISTENER</td>
+              <tr className="h-[48px]">
+                <td className="py-2.5 px-3 text-[#15122B] font-medium">Pooja Verma (Work)</td>
+                <td className="py-2.5 px-3 text-[#5E5A7A] font-mono">+91 99990 77192</td>
+                <td className="py-2.5 px-3 text-[#5B35F5] font-bold font-mono">DECOY-TRIP-085</td>
+                <td className="py-2.5 px-3 text-right text-[#12704A] font-semibold">ACTIVE LISTENER</td>
               </tr>
-              <tr>
-                <td className="py-2.5 text-zinc-300">Electricity Office Desk</td>
-                <td className="py-2.5 text-zinc-400">+91 99990 99403</td>
-                <td className="py-2.5 text-purple-300 font-bold">DECOY-TRIP-086</td>
-                <td className="py-2.5 text-right text-emerald-400">ACTIVE LISTENER</td>
+              <tr className="h-[48px]">
+                <td className="py-2.5 px-3 text-[#15122B] font-medium">Electricity Office Desk</td>
+                <td className="py-2.5 px-3 text-[#5E5A7A] font-mono">+91 99990 99403</td>
+                <td className="py-2.5 px-3 text-[#5B35F5] font-bold font-mono">DECOY-TRIP-086</td>
+                <td className="py-2.5 px-3 text-right text-[#12704A] font-semibold">ACTIVE LISTENER</td>
               </tr>
             </tbody>
           </table>
         </div>
 
-        <p className="text-[11px] text-zinc-500 pt-2 border-t border-zinc-900">
+        <p className="text-[11px] text-[#5E5A7A] pt-2 border-t border-[#EEEAFB]">
           Tripwire explained: We plant unique decoy numbers in your phone that only this app received; when scammers call that number, we have indisputable proof of who leaked it.
         </p>
       </div>

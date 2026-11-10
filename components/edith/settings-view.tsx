@@ -342,18 +342,18 @@ export function SettingsView() {
   return (
     <div className="space-y-6">
       {/* 1. Integration & Webhooks Card */}
-      <Card className="border border-zinc-800 bg-zinc-950/70 backdrop-blur-sm">
-        <CardHeader className="pb-3 border-b border-zinc-800/80">
+      <Card className="rounded-[20px] border border-[#E6E1FA] bg-white shadow-none">
+        <CardHeader className="pb-3 border-b border-[#EEEAFB]">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <div className="flex size-8 items-center justify-center rounded bg-cyan-950/50 border border-cyan-800/60 text-cyan-400">
+              <div className="flex size-9 items-center justify-center rounded-full bg-[#ECE8FF] text-[#5B35F5]">
                 <Radio className="size-4" />
               </div>
               <div>
-                <CardTitle className="text-sm font-semibold text-zinc-100">
+                <CardTitle className="text-sm font-bold text-[#15122B]">
                   External Device Webhook &amp; Server-Sent Events (SSE)
                 </CardTitle>
-                <CardDescription className="text-xs text-zinc-400">
+                <CardDescription className="text-xs text-[#5E5A7A]">
                   Connect remote Android endpoints and OEM AppOps daemons to E.D.I.T.H.
                 </CardDescription>
               </div>
@@ -361,9 +361,9 @@ export function SettingsView() {
             <div className="flex items-center gap-2">
               <Badge
                 variant="outline"
-                className="border-emerald-500/30 bg-emerald-500/10 text-emerald-300 font-mono text-[11px] px-2 py-0.5"
+                className="border-[#1E9E6A]/30 bg-[#E3F6EE] text-[#12704A] font-mono text-[11px] px-2.5 py-0.5 rounded-full"
               >
-                <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse mr-1.5" />
+                <span className="size-1.5 rounded-full bg-[#1E9E6A] animate-pulse mr-1.5" />
                 SSE Stream Active
               </Badge>
             </div>
@@ -371,46 +371,46 @@ export function SettingsView() {
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3 space-y-1.5">
+            <div className="rounded-[16px] border border-[#E6E1FA] bg-[#F9F8FF] p-3.5 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-zinc-200">Webhook Ingestion Endpoint</span>
-                <Badge variant="outline" className="text-[10px] font-mono border-zinc-700 bg-zinc-800 text-zinc-300">
+                <span className="text-xs font-semibold text-[#15122B]">Webhook Ingestion Endpoint</span>
+                <Badge variant="outline" className="text-[10px] font-mono border-[#E6E1FA] bg-white text-[#5B35F5] rounded-full">
                   POST
                 </Badge>
               </div>
-              <p className="font-mono text-xs text-cyan-400 select-all">
+              <p className="font-mono text-xs text-[#5B35F5] font-semibold select-all">
                 http://localhost:5000/api/webhook/device-event
               </p>
-              <p className="text-[11px] text-zinc-400">
+              <p className="text-[11px] text-[#5E5A7A]">
                 Accepts live telemetry JSON payloads from mobile devices and broadcasts to connected web clients.
               </p>
             </div>
 
-            <div className="rounded border border-zinc-800 bg-zinc-900/40 p-3 space-y-1.5">
+            <div className="rounded-[16px] border border-[#E6E1FA] bg-[#F9F8FF] p-3.5 space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-zinc-200">SSE Live Threat Stream</span>
+                <span className="text-xs font-semibold text-[#15122B]">SSE Live Threat Stream</span>
                 <button
                   type="button"
                   onClick={handleCopySse}
-                  className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1 font-mono transition-colors"
+                  className="text-xs text-[#5E5A7A] hover:text-[#15122B] flex items-center gap-1 font-mono transition-colors"
                 >
-                  {copiedSse ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+                  {copiedSse ? <Check className="size-3 text-[#12704A]" /> : <Copy className="size-3" />}
                   Copy URL
                 </button>
               </div>
-              <p className="font-mono text-xs text-emerald-400 select-all">
+              <p className="font-mono text-xs text-[#12704A] font-semibold select-all">
                 http://localhost:5000/api/stream-threats
               </p>
-              <p className="text-[11px] text-zinc-400">
+              <p className="text-[11px] text-[#5E5A7A]">
                 Real-time unidirectional stream delivering telemetry, radar kill-chain steps, and instant fraud alerts.
               </p>
             </div>
           </div>
 
           {/* cURL Snippet */}
-          <div className="rounded border border-zinc-800 bg-black/40 p-3 space-y-2">
+          <div className="rounded-[16px] border border-[#E6E1FA] bg-[#F9F8FF] p-3.5 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-medium text-zinc-400">
+              <span className="text-xs font-mono font-medium text-[#5E5A7A]">
                 Example Webhook Dispatch (cURL / PowerShell)
               </span>
               <Button
@@ -418,11 +418,11 @@ export function SettingsView() {
                 size="sm"
                 variant="ghost"
                 onClick={handleCopyCurl}
-                className="h-7 text-xs font-mono text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60"
+                className="h-7 text-xs font-mono text-[#5E5A7A] hover:text-[#15122B] hover:bg-white rounded-full px-2.5"
               >
                 {copiedCurl ? (
                   <>
-                    <Check className="mr-1.5 size-3.5 text-emerald-400" />
+                    <Check className="mr-1.5 size-3.5 text-[#12704A]" />
                     Copied
                   </>
                 ) : (
@@ -433,7 +433,7 @@ export function SettingsView() {
                 )}
               </Button>
             </div>
-            <pre className="overflow-x-auto text-[11px] font-mono text-cyan-300/90 leading-relaxed p-2.5 rounded bg-zinc-950 border border-zinc-900">
+            <pre className="overflow-x-auto text-[11px] font-mono text-[#15122B] leading-relaxed p-3 rounded-[12px] bg-white border border-[#E6E1FA]">
               {curlCommand}
             </pre>
           </div>
@@ -441,17 +441,17 @@ export function SettingsView() {
       </Card>
 
       {/* 2. Zero-Trust & Autonomous Mitigation Policies Panel */}
-      <Card className="border border-zinc-800 bg-zinc-950/70 backdrop-blur-sm">
-        <CardHeader className="pb-3 border-b border-zinc-800/80">
+      <Card className="rounded-[20px] border border-[#E6E1FA] bg-white shadow-none">
+        <CardHeader className="pb-3 border-b border-[#EEEAFB]">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
-                <Shield className="size-4 text-emerald-400" />
-                <CardTitle className="text-sm font-semibold text-zinc-100">
+                <Shield className="size-4 text-[#5B35F5]" />
+                <CardTitle className="text-sm font-bold text-[#15122B]">
                   Zero-Trust &amp; Autonomous Mitigation Policies
                 </CardTitle>
               </div>
-              <CardDescription className="text-xs text-zinc-400">
+              <CardDescription className="text-xs text-[#5E5A7A]">
                 Active runtime guards, automated OEM kill-switches, and regulatory dispatch protocols.
               </CardDescription>
             </div>
@@ -460,17 +460,17 @@ export function SettingsView() {
             <div className="flex flex-wrap items-center gap-2.5">
               <Badge
                 variant="outline"
-                className="border-zinc-800 bg-zinc-900/60 text-zinc-300 font-mono text-[11px] px-2.5 py-1"
+                className="border-[#5B35F5]/30 bg-[#ECE8FF] text-[#5B35F5] font-mono text-[11px] px-2.5 py-1 rounded-full"
               >
-                <span className="size-1.5 rounded-full bg-emerald-400 mr-1.5" />
+                <span className="size-1.5 rounded-full bg-[#5B35F5] mr-1.5" />
                 {activeCount}/5 Policies Active
               </Badge>
 
               <Badge
                 variant="outline"
-                className="border-zinc-800 bg-zinc-900/60 text-zinc-300 font-mono text-[11px] px-2.5 py-1"
+                className="border-[#E6E1FA] bg-[#F9F8FF] text-[#15122B] font-mono text-[11px] px-2.5 py-1 rounded-full"
               >
-                <Cpu className="size-3 mr-1 text-cyan-400" />
+                <Cpu className="size-3 mr-1 text-[#5B35F5]" />
                 {totalInterventions} Traps Triggered
               </Badge>
 
@@ -479,15 +479,15 @@ export function SettingsView() {
                 onClick={handleRunDiagnostic}
                 disabled={isDiagnosticRunning}
                 className={cn(
-                  "font-mono text-xs font-semibold h-8 px-3.5 transition-all shadow-sm",
+                  "font-medium text-xs h-[38px] px-5 rounded-full transition-all shadow-sm",
                   isDiagnosticRunning
-                    ? "bg-zinc-800 text-zinc-400 cursor-not-allowed border border-zinc-700"
-                    : "bg-emerald-600 hover:bg-emerald-500 text-zinc-950 border border-emerald-500/80"
+                    ? "bg-[#F9F8FF] text-[#5E5A7A] cursor-not-allowed border border-[#E6E1FA]"
+                    : "bg-[#5B35F5] hover:bg-[#4A27D9] text-white shadow-[0_4px_14px_rgba(91,53,245,0.18)]"
                 )}
               >
                 {isDiagnosticRunning ? (
                   <>
-                    <RefreshCw className="mr-2 size-3.5 animate-spin text-emerald-400" />
+                    <RefreshCw className="mr-2 size-3.5 animate-spin text-[#5B35F5]" />
                     Testing Policy {activeTestStep || 1}/5...
                   </>
                 ) : (
@@ -504,23 +504,23 @@ export function SettingsView() {
         <CardContent className="pt-4 space-y-4">
           {/* Diagnostic Running Progress Bar */}
           {isDiagnosticRunning && (
-            <div className="rounded border border-cyan-800/50 bg-cyan-950/20 p-3.5 space-y-2 animate-pulse">
+            <div className="rounded-[16px] border border-[#5B35F5]/30 bg-[#ECE8FF]/40 p-4 space-y-2.5 animate-pulse">
               <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-cyan-300 font-semibold flex items-center gap-2">
+                <span className="text-[#5B35F5] font-semibold flex items-center gap-2">
                   <Activity className="size-3.5 animate-spin" />
                   Step {activeTestStep} of 5: Executing Sovereign Defense Vector Simulation
                 </span>
-                <span className="text-cyan-400">
+                <span className="text-[#5B35F5] font-bold">
                   {Math.round(((activeTestStep || 1) / 5) * 100)}% Complete
                 </span>
               </div>
-              <div className="w-full bg-zinc-900 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-[#E6E1FA] rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-cyan-400 h-1.5 transition-all duration-300 rounded-full"
+                  className="bg-[#5B35F5] h-2 transition-all duration-300 rounded-full"
                   style={{ width: `${((activeTestStep || 1) / 5) * 100}%` }}
                 />
               </div>
-              <p className="text-[11px] font-mono text-zinc-400">
+              <p className="text-[11px] font-mono text-[#5E5A7A]">
                 {activeTestStep === 1 && "Target: Stage 5 Credential Harvester (Process: com.rto.echallan.quickpay) -> Testing OEM Auto-Freeze..."}
                 {activeTestStep === 2 && "Target: 94% Risk Smishing Payload -> Preparing Sanchar Saathi 1930 Evidence Packet (user files it)..."}
                 {activeTestStep === 3 && "Target: AnyDesk Screen Mirroring over PhonePe -> Testing FLAG_SECURE Blackout..."}
@@ -534,27 +534,27 @@ export function SettingsView() {
           {diagnosticReport && !isDiagnosticRunning && (
             <div
               className={cn(
-                "rounded border p-3.5 space-y-3 font-mono transition-all",
+                "rounded-[16px] border p-4 space-y-3 font-mono transition-all",
                 diagnosticReport.passed === 5
-                  ? "border-emerald-500/50 bg-emerald-950/20 text-emerald-300"
-                  : "border-amber-500/50 bg-amber-950/20 text-amber-300"
+                  ? "border-[#1E9E6A]/30 bg-[#E3F6EE] text-[#12704A]"
+                  : "border-[#D99A1E]/30 bg-[#FFF1D6] text-[#8A5A00]"
               )}
             >
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-emerald-500/20 pb-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-black/5 pb-2.5">
                 <div className="flex items-center gap-2">
                   {diagnosticReport.passed === 5 ? (
-                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                    <CheckCircle2 className="size-4 text-[#12704A] shrink-0" />
                   ) : (
-                    <AlertTriangle className="size-4 text-amber-400 shrink-0" />
+                    <AlertTriangle className="size-4 text-[#8A5A00] shrink-0" />
                   )}
                   <span className="text-xs font-bold tracking-tight">
                     {diagnosticReport.message}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-zinc-400">
+                <div className="flex items-center gap-2 text-[10px] text-[#5E5A7A]">
                   <span>Timestamp: {diagnosticReport.timestamp}</span>
                   <span>&middot;</span>
-                  <span className="text-emerald-400">SLA: 18ms (PASS)</span>
+                  <span className="text-[#12704A] font-semibold">SLA: 18ms (PASS)</span>
                 </div>
               </div>
 
@@ -563,29 +563,29 @@ export function SettingsView() {
                 {stepResults.map((sr) => (
                   <div
                     key={sr.step}
-                    className="flex items-start justify-between gap-3 py-1 px-2 rounded bg-zinc-950/60 border border-zinc-900"
+                    className="flex items-start justify-between gap-3 py-1.5 px-3 rounded-[10px] bg-white border border-[#E6E1FA]"
                   >
                     <div className="flex items-center gap-2">
                       {sr.status === "VERIFIED" ? (
-                        <span className="text-emerald-400 font-bold shrink-0">[PASS]</span>
+                        <span className="text-[#12704A] font-bold shrink-0">[PASS]</span>
                       ) : (
-                        <span className="text-zinc-500 font-bold shrink-0">[BYPASS]</span>
+                        <span className="text-[#5E5A7A] font-bold shrink-0">[BYPASS]</span>
                       )}
-                      <span className="text-zinc-200 font-medium">
+                      <span className="text-[#15122B] font-medium">
                         Step {sr.step}: {sr.policyLabel}
                       </span>
                     </div>
                     <div className="flex items-center gap-2 text-right shrink-0">
-                      <span className="text-zinc-400 text-[10px] hidden md:inline">
+                      <span className="text-[#5E5A7A] text-[10px] hidden md:inline">
                         {sr.details}
                       </span>
                       <Badge
                         variant="outline"
                         className={cn(
-                          "text-[9px] font-mono px-1.5 py-0",
+                          "text-[9px] font-mono px-2 py-0.5 rounded-full",
                           sr.status === "VERIFIED"
-                            ? "border-emerald-600/40 text-emerald-400 bg-emerald-950/40"
-                            : "border-zinc-700 text-zinc-400 bg-zinc-900"
+                            ? "border-[#1E9E6A]/30 text-[#12704A] bg-[#E3F6EE]"
+                            : "border-[#E6E1FA] text-[#5E5A7A] bg-[#F9F8FF]"
                         )}
                       >
                         {sr.latencyMs}ms
@@ -598,7 +598,7 @@ export function SettingsView() {
           )}
 
           {/* The 5 Mandatory Policies Table / List */}
-          <div className="divide-y divide-zinc-800/80 border border-zinc-800 rounded bg-zinc-950/50">
+          <div className="divide-y divide-[#EEEAFB] border border-[#E6E1FA] rounded-[16px] bg-white overflow-hidden">
             {policies.map((p, idx) => {
               const isCurrentStep = isDiagnosticRunning && activeTestStep === idx + 1
               return (
@@ -606,23 +606,23 @@ export function SettingsView() {
                   key={p.id}
                   className={cn(
                     "p-4 transition-colors flex flex-col md:flex-row md:items-center md:justify-between gap-4",
-                    isCurrentStep && "bg-cyan-950/20 border-l-2 border-l-cyan-400",
-                    !p.enabled && "opacity-80"
+                    isCurrentStep && "bg-[#ECE8FF]/30 border-l-4 border-l-[#5B35F5]",
+                    !p.enabled && "opacity-75"
                   )}
                 >
                   <div className="space-y-2 flex-1">
                     {/* Policy Title & Badges */}
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-semibold text-zinc-100">
+                      <span className="text-sm font-semibold text-[#15122B]">
                         {p.label}
                       </span>
-                      <code className="text-[10px] font-mono text-zinc-400 bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">
+                      <code className="text-[10px] font-mono text-[#5E5A7A] bg-[#F9F8FF] px-2 py-0.5 rounded-full border border-[#E6E1FA]">
                         {p.id}
                       </code>
                     </div>
 
                     {/* Description */}
-                    <p className="text-xs text-zinc-400 leading-relaxed max-w-2xl">
+                    <p className="text-xs text-[#5E5A7A] leading-relaxed max-w-2xl">
                       {p.description}
                     </p>
 
@@ -632,17 +632,17 @@ export function SettingsView() {
                       {p.enabled ? (
                         <Badge
                           variant="outline"
-                          className="border-emerald-500/40 bg-emerald-500/10 text-emerald-300 font-mono text-[11px] px-2 py-0.5"
+                          className="border-[#1E9E6A]/30 bg-[#E3F6EE] text-[#12704A] font-mono text-[11px] px-2.5 py-0.5 rounded-full"
                         >
-                          <span className="size-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse" />
+                          <span className="size-1.5 rounded-full bg-[#1E9E6A] mr-1.5 animate-pulse" />
                           🟢 ENFORCING (ACTIVE)
                         </Badge>
                       ) : (
                         <Badge
                           variant="outline"
-                          className="border-zinc-800 bg-zinc-900/60 text-zinc-400 font-mono text-[11px] px-2 py-0.5"
+                          className="border-[#E6E1FA] bg-[#F9F8FF] text-[#5E5A7A] font-mono text-[11px] px-2.5 py-0.5 rounded-full"
                         >
-                          <span className="size-1.5 rounded-full bg-zinc-500 mr-1.5" />
+                          <span className="size-1.5 rounded-full bg-[#5E5A7A] mr-1.5" />
                           ⚪ DISABLED / MANUAL ONLY
                         </Badge>
                       )}
@@ -651,24 +651,24 @@ export function SettingsView() {
                       <Badge
                         variant="outline"
                         className={cn(
-                          "border-zinc-700/60 bg-zinc-900/80 font-mono text-[11px] px-2 py-0.5 transition-all",
+                          "border-[#E6E1FA] bg-[#F9F8FF] font-mono text-[11px] px-2.5 py-0.5 rounded-full transition-all",
                           isCurrentStep
-                            ? "border-cyan-500 text-cyan-300 animate-pulse bg-cyan-950/40"
-                            : "text-zinc-300"
+                            ? "border-[#5B35F5] text-[#5B35F5] bg-[#ECE8FF]"
+                            : "text-[#15122B]"
                         )}
                       >
-                        <Activity className="size-3 mr-1 text-cyan-400" />
+                        <Activity className="size-3 mr-1 text-[#5B35F5]" />
                         {p.eventCount} {p.eventLabel}
                       </Badge>
 
                       {/* Technical Hook Identifier */}
-                      <span className="text-[10px] text-zinc-500">
-                        Hook: <code className="text-zinc-400">{p.mitigationHook}</code>
+                      <span className="text-[10px] text-[#5E5A7A]">
+                        Hook: <code className="text-[#15122B] bg-[#F4F2FF] px-1 py-0.5 rounded border border-[#E6E1FA]">{p.mitigationHook}</code>
                       </span>
 
                       {/* Statutory Legal Anchor */}
-                      <span className="text-[10px] text-zinc-500 hidden sm:inline">
-                        Statutory: <span className="text-zinc-400">{p.statutoryRef}</span>
+                      <span className="text-[10px] text-[#5E5A7A] hidden sm:inline">
+                        Statutory: <span className="text-[#15122B] font-medium">{p.statutoryRef}</span>
                       </span>
                     </div>
                   </div>
@@ -683,8 +683,8 @@ export function SettingsView() {
                       disabled={togglingId === p.id || isDiagnosticRunning}
                       onClick={() => handleTogglePolicy(p.id, p.enabled)}
                       className={cn(
-                        "relative h-6 w-11 shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-                        p.enabled ? "bg-emerald-600" : "bg-zinc-800 border border-zinc-700",
+                        "relative h-6 w-11 shrink-0 rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#ECE8FF]",
+                        p.enabled ? "bg-[#5B35F5]" : "bg-[#CFC9EA]",
                         togglingId === p.id && "opacity-50 cursor-wait"
                       )}
                     >
@@ -704,10 +704,10 @@ export function SettingsView() {
       </Card>
 
       {/* 3. Statutory Reference Card */}
-      <div className="flex items-start gap-3 rounded border border-zinc-800 bg-zinc-950/60 p-3.5 text-xs text-zinc-400">
-        <Scale className="size-4 shrink-0 text-cyan-400 mt-0.5" />
+      <div className="flex items-start gap-3 rounded-[16px] border border-[#E6E1FA] bg-white p-4 text-xs text-[#5E5A7A] shadow-none">
+        <Scale className="size-4 shrink-0 text-[#5B35F5] mt-0.5" />
         <p className="leading-relaxed">
-          <strong className="text-zinc-200">Statutory Authority &amp; Legal Mandate:</strong> Enforces compliance with
+          <strong className="text-[#15122B]">Statutory Authority &amp; Legal Mandate:</strong> Enforces compliance with
           Bharatiya Nyaya Sanhita (BNS 2023) Sections 318(4) &amp; 319, Information Technology Act 2000 (Sections 43, 66, and 66D),
           Digital Personal Data Protection Act 2023 (DPDP Act), and Telecom Regulatory Authority of India (TRAI TCCCPR 2018) regulations.
         </p>

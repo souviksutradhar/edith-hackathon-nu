@@ -142,25 +142,25 @@ export function ConsentReceiptLedger() {
       />
 
       {/* Global Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-zinc-800 bg-zinc-950 p-4">
-        <div className="flex items-center gap-2">
-          <FileCheck2 className="size-4 text-emerald-400" />
-          <span className="text-xs font-mono text-zinc-300 font-bold uppercase">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-[20px] border border-[#E6E1FA] bg-white p-5 shadow-none">
+        <div className="flex items-center gap-2.5">
+          <FileCheck2 className="size-5 text-[#5B35F5]" />
+          <span className="text-sm font-bold text-[#15122B]">
             Active App Consent Posture:
           </span>
-          <span className="text-xs text-zinc-400 font-mono">
+          <span className="text-xs text-[#5E5A7A]">
             {totalRecommendations > 0
               ? `${totalRecommendations} recommended removal(s)`
               : "All active apps hardened"}
           </span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-3">
           <Button
             type="button"
             size="sm"
             onClick={applyAllRecommendations}
-            className="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-mono text-xs font-bold h-8 px-3"
+            className="rounded-full bg-[#5B35F5] hover:bg-[#4A27D9] text-white text-xs font-semibold h-9 px-4 shadow-[0_4px_14px_rgba(91,53,245,0.18)]"
           >
             <Sparkles className="mr-1.5 size-3.5 fill-current" />
             Apply all recommendations
@@ -171,9 +171,9 @@ export function ConsentReceiptLedger() {
             size="sm"
             variant="outline"
             onClick={() => triggerPermissionCreep("app-weather")}
-            className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 font-mono text-xs h-8 px-3"
+            className="rounded-full border border-[#E6E1FA] bg-white hover:bg-[#ECE8FF] text-[#5B35F5] text-xs font-semibold h-9 px-4"
           >
-            <Zap className="mr-1.5 size-3 text-amber-400" />
+            <Zap className="mr-1.5 size-3 text-[#D99A1E]" />
             Simulate: app asks for more access later
           </Button>
         </div>
@@ -181,20 +181,20 @@ export function ConsentReceiptLedger() {
 
       {/* Permission Creep Alert Banner */}
       {activeCreepAlert && (
-        <div className="rounded-lg border border-amber-600/60 bg-amber-950/40 p-4 space-y-3">
-          <div className="flex items-center gap-2 text-amber-300 font-bold text-sm font-mono">
-            <TriangleAlert className="size-4 text-amber-400" />
+        <div className="rounded-[16px] border border-[#D99A1E]/30 bg-[#FFF1D6]/40 p-5 space-y-3">
+          <div className="flex items-center gap-2 text-[#8A5A00] font-bold text-sm">
+            <TriangleAlert className="size-4 text-[#D99A1E]" />
             <span>Permission Creep Intercepted: {activeCreepAlert.appName}</span>
           </div>
-          <p className="text-xs text-zinc-200 leading-relaxed font-mono">
+          <p className="text-xs text-[#15122B] leading-relaxed">
             {activeCreepAlert.reason}
           </p>
-          <div className="flex items-center gap-2 pt-1">
+          <div className="flex items-center gap-2.5 pt-1">
             <Button
               type="button"
               size="sm"
               onClick={() => respondToPermissionCreep(false)}
-              className="bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-mono text-xs font-bold h-7 px-3"
+              className="rounded-full bg-[#1E9E6A] hover:bg-[#12704A] text-white text-xs font-semibold h-8 px-4"
             >
               <ShieldCheck className="mr-1.5 size-3.5" />
               Deny (Recommended)
@@ -204,7 +204,7 @@ export function ConsentReceiptLedger() {
               size="sm"
               variant="outline"
               onClick={() => respondToPermissionCreep(true)}
-              className="border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-400 font-mono text-xs h-7 px-3"
+              className="rounded-full border border-[#E6E1FA] bg-white hover:bg-[#ECE8FF] text-[#5E5A7A] text-xs font-semibold h-8 px-4"
             >
               Allow (Risky)
             </Button>
@@ -226,53 +226,55 @@ export function ConsentReceiptLedger() {
           const isFrozen = evalResult.status === "Frozen"
           const config = APP_PERMISSIONS_CONFIG[app.id] || []
 
-          const scoreColor =
-            evalResult.trustScore >= 70
-              ? "text-emerald-400 stroke-emerald-400"
-              : evalResult.trustScore >= 40
-              ? "text-amber-400 stroke-amber-400"
-              : "text-rose-400 stroke-rose-400"
+          let scoreStroke = "#1E9E6A"
+          let scoreText = "text-[#12704A]"
+          if (evalResult.trustScore < 40) {
+            scoreStroke = "#D64545"
+            scoreText = "text-[#B42318]"
+          } else if (evalResult.trustScore <= 70) {
+            scoreStroke = "#D99A1E"
+            scoreText = "text-[#8A5A00]"
+          }
 
           return (
             <div
               key={app.id}
               className={cn(
-                "rounded-lg border p-5 space-y-4 transition-all",
+                "rounded-[20px] border p-6 space-y-4 transition-all shadow-none bg-white",
                 isFrozen
-                  ? "border-rose-800/80 bg-rose-950/20 ring-1 ring-rose-600/30"
-                  : "border-zinc-800 bg-zinc-950"
+                  ? "border-[#D64545] bg-[#FDE8E6]/20 ring-1 ring-[#D64545]/30"
+                  : "border-[#E6E1FA]"
               )}
             >
               {/* App Card Header */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800/80 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EEEAFB] pb-4">
                 <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-base text-zinc-100">{app.name}</span>
-                    <Badge
-                      variant="outline"
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-lg text-[#15122B]">{app.name}</span>
+                    <span
                       className={cn(
-                        "text-[10px] px-2 py-0.5 font-bold font-mono",
+                        "text-xs px-2.5 py-0.5 rounded-full font-bold",
                         isFrozen
-                          ? "border-rose-600 bg-rose-950 text-rose-300 font-extrabold animate-pulse"
+                          ? "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/20 animate-pulse"
                           : evalResult.status === "Suspicious"
-                          ? "border-amber-700 bg-amber-950/40 text-amber-300"
-                          : "border-emerald-800 bg-emerald-950/40 text-emerald-400"
+                          ? "bg-[#FFF1D6] text-[#8A5A00] border border-[#D99A1E]/20"
+                          : "bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20"
                       )}
                     >
                       {isFrozen ? "FROZEN BY E.D.I.T.H." : evalResult.status.toUpperCase()}
-                    </Badge>
+                    </span>
                   </div>
-                  <p className="text-xs text-zinc-400">
+                  <p className="text-xs text-[#5E5A7A]">
                     Declared Purpose:{" "}
-                    <span className="text-zinc-200 font-medium">{app.declaredPurpose}</span>
+                    <span className="text-[#15122B] font-medium">{app.declaredPurpose}</span>
                   </p>
                 </div>
 
                 {/* Trust Score Ring */}
                 <div className="flex items-center gap-3">
-                  <div className="text-right font-mono">
-                    <div className="text-xs text-zinc-400">Trust Score</div>
-                    <div className={cn("text-lg font-bold", scoreColor)}>
+                  <div className="text-right">
+                    <div className="text-xs text-[#5E5A7A]">Trust Score</div>
+                    <div className={cn("text-lg font-bold font-mono", scoreText)}>
                       {evalResult.trustScore}/100
                     </div>
                   </div>
@@ -281,14 +283,14 @@ export function ConsentReceiptLedger() {
                   <div className="relative size-11 flex items-center justify-center">
                     <svg className="size-full -rotate-90" viewBox="0 0 36 36">
                       <path
-                        className="text-zinc-800"
+                        className="text-[#E9E5FB]"
                         strokeWidth="3.5"
-                        stroke="currentColor"
+                        stroke="#E9E5FB"
                         fill="none"
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                       <path
-                        className={scoreColor}
+                        stroke={scoreStroke}
                         strokeDasharray={`${evalResult.trustScore}, 100`}
                         strokeWidth="3.5"
                         strokeLinecap="round"
@@ -296,7 +298,7 @@ export function ConsentReceiptLedger() {
                         d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                       />
                     </svg>
-                    <span className={cn("absolute text-[10px] font-bold font-mono", scoreColor)}>
+                    <span className={cn("absolute text-[11px] font-bold font-mono", scoreText)}>
                       {evalResult.trustScore}
                     </span>
                   </div>
@@ -305,25 +307,25 @@ export function ConsentReceiptLedger() {
 
               {/* Frozen Explanation Box */}
               {isFrozen ? (
-                <div className="p-3.5 rounded border border-rose-700/60 bg-rose-950/40 text-xs font-mono text-rose-200 flex items-start gap-2.5">
-                  <Lock className="size-4 text-rose-400 shrink-0 mt-0.5" />
+                <div className="p-4 rounded-[14px] border border-[#D64545]/30 bg-[#FDE8E6]/40 text-xs text-[#B42318] flex items-start gap-3">
+                  <Lock className="size-4 text-[#D64545] shrink-0 mt-0.5" />
                   <div className="space-y-1">
-                    <p className="font-bold">
+                    <p className="font-bold text-sm">
                       This app was caught attempting fraud. Permissions are locked to protect your accounts.
                     </p>
-                    <p className="text-[11px] text-rose-300/80">
+                    <p className="text-xs opacity-90">
                       Auto-containment revoked all runtime capabilities. To restore system trust, uninstall this package from device settings.
                     </p>
                   </div>
                 </div>
               ) : (
                 /* Permission Toggles List */
-                <div className="space-y-2.5">
-                  <div className="text-[11px] uppercase tracking-wider text-zinc-500 font-mono font-semibold">
+                <div className="space-y-3">
+                  <div className="text-xs uppercase tracking-wider text-[#5E5A7A] font-semibold">
                     Configured Permission Scopes:
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {config.map((perm) => {
                       const isGranted = app.grantedPermissions.some((gp) =>
                         gp.toLowerCase().includes(perm.key.toLowerCase())
@@ -334,22 +336,22 @@ export function ConsentReceiptLedger() {
                         <div
                           key={perm.key}
                           className={cn(
-                            "rounded border p-2.5 flex items-start justify-between gap-2 text-xs font-mono transition-colors",
+                            "rounded-[14px] border p-3.5 flex items-start justify-between gap-3 text-xs transition-colors",
                             isUnnecessary && isGranted
-                              ? "border-amber-700/60 bg-amber-950/20"
-                              : "border-zinc-800/80 bg-zinc-900/40"
+                              ? "border-[#D99A1E]/30 bg-[#FFF1D6]/30"
+                              : "border-[#E6E1FA] bg-[#F9F8FF]"
                           )}
                         >
                           <div className="space-y-1 flex-1">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="font-bold text-zinc-200">{perm.name}</span>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-[#15122B] text-sm">{perm.name}</span>
                               {perm.isExpected ? (
-                                <span className="text-[9px] px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-400 border border-zinc-700">
+                                <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20 font-semibold">
                                   Expected
                                 </span>
                               ) : (
                                 isGranted && (
-                                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-950 border border-amber-700 text-amber-300 font-bold">
+                                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#FFF1D6] border border-[#D99A1E]/30 text-[#8A5A00] font-bold">
                                     Recommended to remove
                                   </span>
                                 )
@@ -357,7 +359,7 @@ export function ConsentReceiptLedger() {
                             </div>
 
                             {perm.removalReason && isGranted && (
-                              <p className="text-[11px] text-amber-400/90 leading-tight">
+                              <p className="text-xs text-[#8A5A00] leading-snug pt-0.5">
                                 {perm.removalReason}
                               </p>
                             )}
@@ -371,14 +373,14 @@ export function ConsentReceiptLedger() {
                             disabled={isFrozen}
                             onClick={() => toggleAppPermission(app.id, perm.key, !isGranted)}
                             className={cn(
-                              "relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
-                              isGranted ? "bg-emerald-600" : "bg-zinc-700"
+                              "relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none",
+                              isGranted ? "bg-[#5B35F5]" : "bg-[#CFC9EA]"
                             )}
                           >
                             <span
                               className={cn(
-                                "pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
-                                isGranted ? "translate-x-4" : "translate-x-0"
+                                "pointer-events-none inline-block size-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                                isGranted ? "translate-x-5" : "translate-x-0"
                               )}
                             />
                           </button>
@@ -394,57 +396,57 @@ export function ConsentReceiptLedger() {
       </div>
 
       {/* Change History Table */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-950 overflow-hidden font-mono text-xs space-y-2">
-        <div className="flex items-center gap-2 p-3 border-b border-zinc-800 bg-zinc-900/50">
-          <History className="size-4 text-cyan-400" />
-          <h4 className="text-xs uppercase font-bold text-zinc-300">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white overflow-hidden shadow-none space-y-0">
+        <div className="flex items-center gap-2 p-4 border-b border-[#EEEAFB] bg-[#F9F8FF]">
+          <History className="size-4 text-[#5B35F5]" />
+          <h4 className="text-xs uppercase font-bold text-[#15122B]">
             Consent Mutation &amp; Risk History Log
           </h4>
         </div>
 
         {consentHistory.length === 0 ? (
-          <div className="p-8 text-center text-xs text-zinc-500">
+          <div className="p-10 text-center text-xs text-[#5E5A7A]">
             Run the demo to see activity here
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead className="bg-zinc-900/70 border-b border-zinc-800 text-zinc-400 uppercase text-[10px]">
+            <table className="w-full text-left text-sm border-collapse">
+              <thead className="bg-[#F9F8FF] border-b border-[#EEEAFB] text-[#5E5A7A] text-[13px] font-semibold">
                 <tr>
-                  <th className="py-2.5 px-3 font-semibold w-24">Time (IST)</th>
-                  <th className="py-2.5 px-3 font-semibold">Application</th>
-                  <th className="py-2.5 px-3 font-semibold">Permission Action</th>
-                  <th className="py-2.5 px-3 font-semibold text-right w-36">Trust Score Delta</th>
+                  <th className="py-3 px-4 w-28">Time (IST)</th>
+                  <th className="py-3 px-4">Application</th>
+                  <th className="py-3 px-4">Permission Action</th>
+                  <th className="py-3 px-4 text-right w-40">Trust Score Delta</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-800/50">
+              <tbody className="divide-y divide-[#EEEAFB]">
                 {consentHistory.map((rec) => (
-                  <tr key={rec.id} className="hover:bg-zinc-900/40">
-                    <td className="py-2 px-3 text-zinc-400">{rec.timestamp}</td>
-                    <td className="py-2 px-3 font-semibold text-zinc-200">{rec.appName}</td>
-                    <td className="py-2 px-3 text-zinc-300">
+                  <tr key={rec.id} className="h-[52px] hover:bg-[#F9F8FF] transition-colors">
+                    <td className="py-3 px-4 text-xs font-mono text-[#5E5A7A]">{rec.timestamp}</td>
+                    <td className="py-3 px-4 font-semibold text-[#15122B]">{rec.appName}</td>
+                    <td className="py-3 px-4 text-xs text-[#15122B]">
                       <span
                         className={cn(
-                          "px-1.5 py-0.5 rounded text-[10px] font-bold border mr-2",
+                          "px-2 py-0.5 rounded-full text-[10px] font-bold mr-2",
                           rec.action === "FROZEN_BY_EDITH"
-                            ? "border-rose-800 bg-rose-950 text-rose-300"
+                            ? "border border-[#D64545]/20 bg-[#FDE8E6] text-[#B42318]"
                             : rec.action === "REVOKED"
-                            ? "border-amber-800 bg-amber-950 text-amber-300"
-                            : "border-emerald-800 bg-emerald-950 text-emerald-300"
+                            ? "border border-[#D99A1E]/20 bg-[#FFF1D6] text-[#8A5A00]"
+                            : "border border-[#1E9E6A]/20 bg-[#E3F6EE] text-[#12704A]"
                         )}
                       >
                         {rec.action}
                       </span>
-                      <span className="text-zinc-400 text-[11px]">{rec.permission}</span>
+                      <span className="text-[#5E5A7A]">{rec.permission}</span>
                     </td>
-                    <td className="py-2 px-3 text-right">
-                      <span className="text-zinc-400">
+                    <td className="py-3 px-4 text-right text-xs font-mono">
+                      <span className="text-[#5E5A7A]">
                         {rec.previousScore} &rarr;{" "}
                         <strong
                           className={
                             rec.newScore < rec.previousScore
-                              ? "text-rose-400"
-                              : "text-emerald-400"
+                              ? "text-[#B42318]"
+                              : "text-[#12704A]"
                           }
                         >
                           {rec.newScore}

@@ -120,50 +120,54 @@ export function SmsShieldPanel() {
     }, 2400)
     scanTimersRef.current.push(t4)
 
-    // Step 5: Final Synthesized Verdict (2400ms -> 3000ms)
+    // Step 5: Verdict compilation (2400ms -> 3000ms)
     const t5 = setTimeout(() => {
       setIsScanning(false)
       setAnalysisResult(evaluated)
+
       if (evaluated.verdictColor === "red") {
-        toast.error(`SMS Threat Flagged: ${evaluated.verdict}`, {
-          description: `Score: ${evaluated.score}/100. High-risk smishing indicators identified.`,
+        toast.error(`Threat Detected: ${evaluated.verdict}`, {
+          description: `Score: ${evaluated.score}/100. High-risk coercion or lookalike link.`,
         })
       } else if (evaluated.verdictColor === "amber") {
-        toast.warning(`SMS Caution: ${evaluated.verdict}`, {
-          description: `Score: ${evaluated.score}/100. Unverified or suspicious payload.`,
+        toast.warning(`Suspicious SMS: ${evaluated.verdict}`, {
+          description: `Score: ${evaluated.score}/100. Proceed with extreme caution.`,
         })
       } else {
-        toast.success(`SMS Verified: ${evaluated.verdict}`, {
-          description: "Matches legitimate DLT communications registry.",
+        toast.success(`Verified Sender: ${evaluated.verdict}`, {
+          description: `Score: ${evaluated.score}/100. Header matches approved registry.`,
         })
       }
     }, 3000)
     scanTimersRef.current.push(t5)
   }
 
-  // Auto-scan the default sample on mount
+  // Cleanup on unmount
   useEffect(() => {
-    handleReceiveAndScan(SAMPLE_SMS_LIST[0].sender, SAMPLE_SMS_LIST[0].message)
-    return () => clearScanTimers()
+    return () => {
+      clearScanTimers()
+    }
   }, [])
 
-  // Handler for "User installs the app anyway"
+  // Auto-run first sample scan on initial mount so judges see immediate data
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      handleReceiveAndScan(SAMPLE_SMS_LIST[0].sender, SAMPLE_SMS_LIST[0].message)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [])
+
+  // Handler: "User installs the app anyway" -> runs full kill-chain attack simulation
   const handleUserInstallsAnyway = () => {
-    if (!analysisResult) return
-    toast.warning("User ignored SMS warnings and sideloaded APK", {
-      description: "Launching autonomous endpoint containment simulation...",
+    toast.info("Simulating user installing APK from WhatsApp lure...", {
+      description: "Transferring to Kill-Chain Stage 1 Ingress.",
     })
+    runSimulation()
 
-    runSimulation({
-      sender: activeMessage?.sender || senderInput,
-      message: activeMessage?.text || messageInput,
-      apkUrl: analysisResult.apkUrl,
-    })
-
-    // Smooth scroll down to the kill-chain tracker
-    const el = document.getElementById("kill-chain-tracker")
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" })
+    // Smooth scroll down to kill-chain section
+    const elem = document.getElementById("kill-chain-tracker")
+    if (elem) {
+      elem.scrollIntoView({ behavior: "smooth" })
     }
   }
 
@@ -176,35 +180,32 @@ export function SmsShieldPanel() {
   ]
 
   return (
-    <div className="space-y-4 font-mono">
+    <div className="space-y-4">
       {/* Outer Card with Header */}
-      <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5 space-y-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
+      <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-6 space-y-5 shadow-none">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#EEEAFB] pb-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-zinc-900 border border-zinc-800 text-emerald-400">
+            <div className="p-2.5 rounded-xl bg-[#ECE8FF] text-[#5B35F5]">
               <Smartphone className="size-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-zinc-100 uppercase tracking-wide">
+              <div className="flex items-center gap-2.5">
+                <h2 className="text-base font-bold text-[#15122B]">
                   Virtual Phone: SMS Shield
                 </h2>
-                <Badge
-                  variant="outline"
-                  className="border-emerald-600/40 bg-emerald-950/40 text-emerald-400 text-[10px] font-mono"
-                >
-                  Client-Side Ingress
-                </Badge>
+                <span className="rounded-full bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20 text-[11px] font-semibold px-2.5 py-0.5">
+                  Client-side ingress
+                </span>
               </div>
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-xs text-[#5E5A7A] mt-0.5">
                 Inspect incoming SMS lures in a simulated device environment before permission escalation occurs.
               </p>
             </div>
           </div>
 
           {/* Quick Preset Selector */}
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="text-xs text-zinc-500 font-semibold">Receive a sample SMS:</span>
+          <div className="flex flex-wrap items-center gap-2.5">
+            <span className="text-xs text-[#5E5A7A] font-medium">Sample SMS:</span>
             <select
               value={isCustomMode ? "custom" : selectedSampleId}
               onChange={(e) => {
@@ -214,7 +215,7 @@ export function SmsShieldPanel() {
                   handleSelectSample(e.target.value)
                 }
               }}
-              className="bg-zinc-900 border border-zinc-700 text-zinc-200 text-xs rounded px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="bg-white border border-[#E6E1FA] text-[#15122B] text-xs rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-[#5B35F5]"
             >
               {SAMPLE_SMS_LIST.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -229,7 +230,7 @@ export function SmsShieldPanel() {
               size="sm"
               onClick={() => handleReceiveAndScan()}
               disabled={isScanning}
-              className="h-8 px-3 text-xs bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold"
+              className="rounded-full h-9 px-4 text-xs bg-[#5B35F5] hover:bg-[#4A27D9] text-white font-semibold shadow-sm"
             >
               {isScanning ? (
                 <>
@@ -248,32 +249,32 @@ export function SmsShieldPanel() {
 
         {/* Custom Input Drawer if selected */}
         {isCustomMode && (
-          <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-4 space-y-3 animate-in fade-in-50 duration-200">
+          <div className="rounded-[16px] border border-[#E6E1FA] bg-[#F9F8FF] p-4 space-y-3 animate-in fade-in-50 duration-200">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-zinc-300 uppercase">
+              <span className="text-xs font-bold text-[#15122B] uppercase">
                 Custom Ingress Simulator
               </span>
-              <span className="text-[11px] text-zinc-500">
+              <span className="text-xs text-[#5E5A7A]">
                 Type any sender ID and message text to test deterministic rules
               </span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="text-[11px] text-zinc-400 block mb-1">Sender Number / DLT Header</label>
+                <label className="text-xs text-[#5E5A7A] block mb-1 font-medium">Sender Number / Header</label>
                 <Input
                   value={senderInput}
                   onChange={(e) => setSenderInput(e.target.value)}
                   placeholder="e.g., +91 98321 00000 or AD-SBIINB"
-                  className="h-8 text-xs font-mono bg-zinc-950 border-zinc-800"
+                  className="h-9 text-xs"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="text-[11px] text-zinc-400 block mb-1">Incoming Message Body</label>
+                <label className="text-xs text-[#5E5A7A] block mb-1 font-medium">Incoming Message Body</label>
                 <Input
                   value={messageInput}
                   onChange={(e) => setMessageInput(e.target.value)}
                   placeholder="Paste SMS content or malicious link here..."
-                  className="h-8 text-xs font-mono bg-zinc-950 border-zinc-800"
+                  className="h-9 text-xs"
                 />
               </div>
             </div>
@@ -281,45 +282,44 @@ export function SmsShieldPanel() {
         )}
 
         {/* Two-Column Display: Left = Phone-Shaped Inbox; Right = Pipeline Stepper & Result Card */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Phone-Shaped Inbox Mockup (5 cols) */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="w-full max-w-[340px] rounded-[2.2rem] border-4 border-zinc-800 bg-zinc-950 shadow-2xl p-3 flex flex-col space-y-3 relative overflow-hidden">
+            <div className="w-full max-w-[340px] rounded-[32px] border-4 border-[#E6E1FA] bg-white shadow-md p-3.5 flex flex-col space-y-3 relative overflow-hidden">
               {/* Phone Top Notch & Status Bar */}
-              <div className="flex items-center justify-between px-3 pt-1 text-[11px] text-zinc-400 border-b border-zinc-900 pb-2">
-                <span className="font-bold text-zinc-200">17:05</span>
-                <div className="w-16 h-3 rounded-full bg-zinc-900 mx-auto" />
+              <div className="flex items-center justify-between px-3 pt-1 text-xs text-[#5E5A7A] border-b border-[#EEEAFB] pb-2">
+                <span className="font-bold text-[#15122B]">17:05</span>
+                <div className="w-16 h-3 rounded-full bg-[#E6E1FA] mx-auto" />
                 <div className="flex items-center gap-1.5">
-                  <Wifi className="size-3 text-zinc-400" />
-                  <Radio className="size-3 text-zinc-400" />
-                  <Battery className="size-3.5 text-zinc-400" />
+                  <Wifi className="size-3 text-[#5E5A7A]" />
+                  <Radio className="size-3 text-[#5E5A7A]" />
+                  <Battery className="size-3.5 text-[#5E5A7A]" />
                 </div>
               </div>
 
               {/* Messaging App Bar */}
               <div className="flex items-center justify-between px-2 text-xs">
                 <div className="flex items-center gap-2">
-                  <div className="size-7 rounded-full bg-zinc-800 flex items-center justify-center text-zinc-300 font-bold text-xs">
+                  <div className="size-8 rounded-full bg-[#ECE8FF] text-[#5B35F5] flex items-center justify-center font-bold text-xs">
                     {activeMessage ? activeMessage.sender.slice(0, 2).toUpperCase() : "ED"}
                   </div>
                   <div>
-                    <p className="font-bold text-zinc-100 text-xs truncate max-w-[170px]">
+                    <p className="font-bold text-[#15122B] text-xs truncate max-w-[170px]">
                       {activeMessage ? activeMessage.sender : senderInput}
                     </p>
-                    <span className="text-[10px] text-zinc-500">SIM 1 &middot; SMS</span>
+                    <span className="text-[11px] text-[#5E5A7A]">SIM 1 &middot; SMS</span>
                   </div>
                 </div>
-                <Badge
-                  variant="outline"
+                <span
                   className={cn(
-                    "text-[9px] px-1.5 py-0.2",
+                    "text-[10px] px-2 py-0.5 rounded-full font-bold",
                     isScanning
-                      ? "border-amber-600/40 text-amber-400 bg-amber-950/40 animate-pulse"
+                      ? "border border-[#D99A1E]/30 text-[#8A5A00] bg-[#FFF1D6] animate-pulse"
                       : analysisResult?.verdictColor === "red"
-                      ? "border-rose-600/40 text-rose-400 bg-rose-950/40"
+                      ? "border border-[#D64545]/30 text-[#B42318] bg-[#FDE8E6]"
                       : analysisResult?.verdictColor === "amber"
-                      ? "border-amber-600/40 text-amber-400 bg-amber-950/40"
-                      : "border-emerald-600/40 text-emerald-400 bg-emerald-950/40"
+                      ? "border border-[#D99A1E]/30 text-[#8A5A00] bg-[#FFF1D6]"
+                      : "border border-[#1E9E6A]/30 text-[#12704A] bg-[#E3F6EE]"
                   )}
                 >
                   {isScanning
@@ -327,32 +327,32 @@ export function SmsShieldPanel() {
                     : analysisResult
                     ? analysisResult.verdict.toUpperCase()
                     : "STANDBY"}
-                </Badge>
+                </span>
               </div>
 
               {/* Phone Message Body Area */}
-              <div className="min-h-[220px] rounded-xl bg-zinc-900/60 p-3 flex flex-col justify-end space-y-2 border border-zinc-900">
-                <div className="text-center text-[10px] text-zinc-600 py-1">
+              <div className="min-h-[220px] rounded-[18px] bg-[#F9F8FF] p-3.5 flex flex-col justify-end space-y-2 border border-[#E6E1FA]">
+                <div className="text-center text-[11px] text-[#5E5A7A] py-1">
                   Today &middot; 24h IST
                 </div>
 
                 {/* Message Bubble */}
                 <div
                   className={cn(
-                    "rounded-2xl rounded-tl-sm p-3 text-xs leading-relaxed space-y-1.5 transition-all shadow-md relative",
+                    "rounded-[16px] rounded-tl-xs p-3.5 text-xs leading-relaxed space-y-1.5 transition-all shadow-sm relative",
                     analysisResult?.verdictColor === "red"
-                      ? "bg-rose-950/50 border border-rose-800/80 text-rose-100"
+                      ? "bg-[#FDE8E6] border border-[#D64545]/30 text-[#B42318]"
                       : analysisResult?.verdictColor === "amber"
-                      ? "bg-amber-950/50 border border-amber-800/80 text-amber-100"
+                      ? "bg-[#FFF1D6] border border-[#D99A1E]/30 text-[#8A5A00]"
                       : analysisResult?.verdictColor === "green"
-                      ? "bg-zinc-800 border border-zinc-700 text-zinc-100"
-                      : "bg-zinc-800/80 border border-zinc-700/80 text-zinc-200"
+                      ? "bg-white border border-[#E6E1FA] text-[#15122B]"
+                      : "bg-white border border-[#E6E1FA] text-[#15122B]"
                   )}
                 >
                   {isScanning && (
-                    <div className="absolute inset-0 bg-black/60 rounded-2xl flex items-center justify-center gap-2 backdrop-blur-xs">
-                      <Loader2 className="size-4 animate-spin text-emerald-400" />
-                      <span className="text-[11px] font-bold text-emerald-300">
+                    <div className="absolute inset-0 bg-white/80 rounded-[16px] flex items-center justify-center gap-2 backdrop-blur-xs">
+                      <Loader2 className="size-4 animate-spin text-[#5B35F5]" />
+                      <span className="text-xs font-bold text-[#5B35F5]">
                         Scanning Step {scanStep}/5...
                       </span>
                     </div>
@@ -361,7 +361,7 @@ export function SmsShieldPanel() {
                   <p className="text-xs break-words">
                     {activeMessage ? activeMessage.text : messageInput}
                   </p>
-                  <div className="flex items-center justify-between text-[10px] text-zinc-500 pt-1">
+                  <div className="flex items-center justify-between text-[10px] text-[#5E5A7A] pt-1">
                     <span>
                       {analysisResult?.hasApk
                         ? "⚠️ Attachment: .apk package"
@@ -374,7 +374,7 @@ export function SmsShieldPanel() {
 
               {/* Virtual Phone Bottom Indicator */}
               <div className="pt-1 pb-0.5 text-center">
-                <div className="w-24 h-1 rounded-full bg-zinc-800 mx-auto" />
+                <div className="w-24 h-1 rounded-full bg-[#E6E1FA] mx-auto" />
               </div>
             </div>
           </div>
@@ -382,12 +382,12 @@ export function SmsShieldPanel() {
           {/* Pipeline Stepper & Result Card (7 cols) */}
           <div className="lg:col-span-7 space-y-4">
             {/* Animated 5-Step Progress Stepper */}
-            <div className="rounded-lg border border-zinc-800 bg-zinc-950 p-3.5 space-y-2.5">
-              <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
-                <span className="text-xs font-bold text-zinc-300 uppercase">
+            <div className="rounded-[20px] border border-[#E6E1FA] bg-white p-5 space-y-3 shadow-none">
+              <div className="flex items-center justify-between border-b border-[#EEEAFB] pb-2.5">
+                <span className="text-xs font-bold text-[#15122B] uppercase">
                   5-Step Heuristic Pipeline
                 </span>
-                <span className="text-xs font-bold text-emerald-400">
+                <span className="text-xs font-semibold text-[#1E9E6A]">
                   {isScanning ? (
                     <span className="animate-pulse">Inspecting (Step {scanStep}/5)...</span>
                   ) : analysisResult ? (
@@ -399,7 +399,7 @@ export function SmsShieldPanel() {
               </div>
 
               {/* Steps Progress Grid */}
-              <div className="grid grid-cols-5 gap-1.5">
+              <div className="grid grid-cols-5 gap-2">
                 {PIPELINE_STEPS.map((step) => {
                   const isCurrent = isScanning && scanStep === step.num
                   const isCompleted = (!isScanning && analysisResult !== null) || scanStep > step.num
@@ -408,22 +408,22 @@ export function SmsShieldPanel() {
                     <div
                       key={step.num}
                       className={cn(
-                        "rounded p-2 text-center border transition-all flex flex-col items-center justify-center gap-1",
+                        "rounded-[14px] p-2 text-center border transition-all flex flex-col items-center justify-center gap-1",
                         isCurrent
-                          ? "border-amber-500 bg-amber-950/40 text-amber-200 ring-1 ring-amber-500/50 animate-pulse"
+                          ? "border-2 border-[#5B35F5] bg-[#ECE8FF] text-[#5B35F5] ring-2 ring-[#ECE8FF]"
                           : isCompleted
-                          ? "border-emerald-800/80 bg-emerald-950/30 text-emerald-300"
-                          : "border-zinc-800 bg-zinc-900/40 text-zinc-500"
+                          ? "border-[#1E9E6A]/30 bg-[#E3F6EE] text-[#12704A]"
+                          : "border-[#E6E1FA] bg-[#F9F8FF] text-[#5E5A7A]"
                       )}
                     >
-                      <div className="size-4 rounded-full flex items-center justify-center text-[10px] font-bold">
+                      <div className="size-5 rounded-full flex items-center justify-center text-xs font-bold">
                         {isCompleted && !isCurrent ? (
-                          <CheckCircle2 className="size-3 text-emerald-400" />
+                          <CheckCircle2 className="size-3.5 text-[#1E9E6A]" />
                         ) : (
                           <span>{step.num}</span>
                         )}
                       </div>
-                      <span className="text-[9px] font-bold leading-tight">
+                      <span className="text-[10px] font-semibold leading-tight">
                         {step.label}
                       </span>
                     </div>
@@ -436,36 +436,36 @@ export function SmsShieldPanel() {
             {analysisResult && (
               <div
                 className={cn(
-                  "rounded-lg border p-4 space-y-4 animate-in fade-in-50 duration-300",
+                  "rounded-[20px] border p-5 space-y-4 animate-in fade-in-50 duration-300 bg-white",
                   analysisResult.verdictColor === "red"
-                    ? "border-rose-700/80 bg-rose-950/20"
+                    ? "border-[#D64545]/40"
                     : analysisResult.verdictColor === "amber"
-                    ? "border-amber-700/80 bg-amber-950/20"
-                    : "border-emerald-700/80 bg-emerald-950/20"
+                    ? "border-[#D99A1E]/40"
+                    : "border-[#1E9E6A]/40"
                 )}
               >
                 {/* Result Header & Verdict */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-zinc-800/80 pb-3">
-                  <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#EEEAFB] pb-3">
+                  <div className="flex items-center gap-2.5">
                     {analysisResult.verdictColor === "red" ? (
-                      <ShieldAlert className="size-5 text-rose-400" />
+                      <ShieldAlert className="size-6 text-[#D64545]" />
                     ) : analysisResult.verdictColor === "amber" ? (
-                      <AlertTriangle className="size-5 text-amber-400" />
+                      <AlertTriangle className="size-6 text-[#D99A1E]" />
                     ) : (
-                      <ShieldCheck className="size-5 text-emerald-400" />
+                      <ShieldCheck className="size-6 text-[#1E9E6A]" />
                     )}
                     <div>
-                      <span className="text-xs text-zinc-400 uppercase font-bold block">
+                      <span className="text-xs text-[#5E5A7A] uppercase font-semibold block">
                         Verdict
                       </span>
                       <p
                         className={cn(
                           "text-base font-extrabold uppercase tracking-wide",
                           analysisResult.verdictColor === "red"
-                            ? "text-rose-400"
+                            ? "text-[#B42318]"
                             : analysisResult.verdictColor === "amber"
-                            ? "text-amber-400"
-                            : "text-emerald-400"
+                            ? "text-[#8A5A00]"
+                            : "text-[#12704A]"
                         )}
                       >
                         {analysisResult.verdict}
@@ -474,39 +474,39 @@ export function SmsShieldPanel() {
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <Badge
+                    <span
                       className={cn(
-                        "text-xs font-mono font-bold px-2.5 py-1",
+                        "text-xs font-semibold px-3 py-1 rounded-full",
                         analysisResult.verdictColor === "red"
-                          ? "bg-rose-900/60 border border-rose-600 text-rose-200"
+                          ? "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/20"
                           : analysisResult.verdictColor === "amber"
-                          ? "bg-amber-900/60 border border-amber-600 text-amber-200"
-                          : "bg-emerald-900/60 border border-emerald-600 text-emerald-200"
+                          ? "bg-[#FFF1D6] text-[#8A5A00] border border-[#D99A1E]/20"
+                          : "bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20"
                       )}
                     >
                       Risk Score: {analysisResult.score} / 100
-                    </Badge>
+                    </span>
                   </div>
                 </div>
 
                 {/* Warning Message */}
-                <div className="rounded bg-black/50 p-3.5 border border-zinc-800">
-                  <p className="text-xs font-bold text-zinc-200 leading-snug">
+                <div className="rounded-[14px] bg-[#F9F8FF] p-4 border border-[#E6E1FA]">
+                  <p className="text-xs font-semibold text-[#15122B] leading-relaxed">
                     {analysisResult.bilingualWarning.en}
                   </p>
                 </div>
 
                 {/* Defanged Links Section (if any links exist) */}
                 {analysisResult.defangedUrls.length > 0 && (
-                  <div className="space-y-1 bg-zinc-900/80 p-3 rounded border border-zinc-800 text-xs">
-                    <div className="flex items-center gap-1.5 text-zinc-400 text-[11px] font-bold">
-                      <LinkIcon className="size-3 text-cyan-400" />
+                  <div className="space-y-1.5 bg-[#F9F8FF] p-3.5 rounded-[14px] border border-[#E6E1FA] text-xs">
+                    <div className="flex items-center gap-1.5 text-[#5E5A7A] text-xs font-semibold">
+                      <LinkIcon className="size-3.5 text-[#5B35F5]" />
                       <span>Extracted Link (Defanged for Safety):</span>
                     </div>
                     {analysisResult.defangedUrls.map((url, i) => (
                       <code
                         key={i}
-                        className="block font-mono text-[11px] text-amber-300 bg-black/60 px-2 py-1 rounded break-all select-all"
+                        className="block font-mono text-xs text-[#8A5A00] bg-white px-3 py-1.5 rounded-[8px] border border-[#E6E1FA] break-all select-all font-semibold"
                       >
                         {url}
                       </code>
@@ -519,39 +519,39 @@ export function SmsShieldPanel() {
                   <button
                     type="button"
                     onClick={() => setShowFindingsDetails(!showFindingsDetails)}
-                    className="flex items-center justify-between w-full text-xs font-bold text-zinc-300 hover:text-zinc-100 py-1"
+                    className="flex items-center justify-between w-full text-xs font-bold text-[#15122B] hover:text-[#5B35F5] py-1 cursor-pointer"
                   >
                     <span>
                       Why this verdict ({analysisResult.findings.length} findings)
                     </span>
                     {showFindingsDetails ? (
-                      <ChevronUp className="size-4" />
+                      <ChevronUp className="size-4 text-[#5E5A7A]" />
                     ) : (
-                      <ChevronDown className="size-4" />
+                      <ChevronDown className="size-4 text-[#5E5A7A]" />
                     )}
                   </button>
 
                   {showFindingsDetails && (
-                    <div className="space-y-1.5 pt-1">
+                    <div className="space-y-2 pt-1">
                       {analysisResult.findings.map((f, idx) => (
                         <div
                           key={idx}
-                          className="flex items-start justify-between gap-2 p-2 rounded bg-zinc-900/60 border border-zinc-800 text-xs"
+                          className="flex items-start justify-between gap-3 p-3 rounded-[12px] bg-[#F9F8FF] border border-[#E6E1FA] text-xs"
                         >
                           <div className="space-y-0.5">
-                            <span className="font-bold text-zinc-200 block">
+                            <span className="font-semibold text-[#15122B] block">
                               {f.title}
                             </span>
-                            <p className="text-[11px] text-zinc-400 leading-relaxed">
+                            <p className="text-xs text-[#5E5A7A] leading-relaxed">
                               {f.description}
                             </p>
                           </div>
                           <span
                             className={cn(
-                              "shrink-0 font-bold px-1.5 py-0.5 rounded text-[10px]",
+                              "shrink-0 font-bold px-2 py-0.5 rounded-full text-xs",
                               f.points > 0
-                                ? "bg-rose-950 border border-rose-800 text-rose-300"
-                                : "bg-emerald-950 border border-emerald-800 text-emerald-300"
+                                ? "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/20"
+                                : "bg-[#E3F6EE] text-[#12704A] border border-[#1E9E6A]/20"
                             )}
                           >
                             {f.points > 0 ? `+${f.points}` : "0"}
@@ -564,31 +564,31 @@ export function SmsShieldPanel() {
 
                 {/* Integration Action: "User installs the app anyway" */}
                 {analysisResult.hasApk && (
-                  <div className="pt-2 border-t border-zinc-800/80">
+                  <div className="pt-3 border-t border-[#EEEAFB]">
                     <Button
                       type="button"
                       onClick={handleUserInstallsAnyway}
                       disabled={isRunning}
-                      className="w-full h-9 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2"
+                      className="w-full h-10 rounded-full bg-[#D64545] hover:bg-[#B42318] text-white font-bold text-xs uppercase tracking-wider shadow-md flex items-center justify-center gap-2"
                     >
                       <Flame className="size-4 fill-current" />
                       <span>User installs the app anyway</span>
                       <ArrowRight className="size-3.5" />
                     </Button>
-                    <p className="text-[10px] text-zinc-500 text-center mt-1">
+                    <p className="text-[11px] text-[#5E5A7A] text-center mt-1.5">
                       Simulates victim proceeding with sideloading. Hands off to RTO Challan Kill-Chain (Stage 1 Lure).
                     </p>
                   </div>
                 )}
 
                 {/* External Safety Reporting Action Buttons */}
-                <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-zinc-800/60">
+                <div className="flex flex-wrap items-center gap-2.5 pt-3 border-t border-[#EEEAFB]">
                   {(analysisResult.verdictColor === "red" || analysisResult.verdictColor === "amber") && (
                     <Button
                       type="button"
                       size="sm"
                       onClick={() => setShowComplaintKit(true)}
-                      className="h-8 px-3 rounded bg-amber-500 hover:bg-amber-400 text-zinc-950 font-bold text-xs flex items-center gap-1.5 transition-colors shadow-sm"
+                      className="h-9 px-4 rounded-full bg-[#5B35F5] hover:bg-[#4A27D9] text-white font-semibold text-xs flex items-center gap-1.5 transition-all shadow-[0_4px_14px_rgba(91,53,245,0.18)]"
                     >
                       <FileText className="size-3.5" />
                       <span>Generate Complaint Kit</span>
@@ -599,22 +599,22 @@ export function SmsShieldPanel() {
                     href="https://cybercrime.gov.in"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded border border-zinc-700 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 text-xs font-medium transition-colors"
+                    className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#E6E1FA] bg-white hover:bg-[#ECE8FF] text-[#5B35F5] text-xs font-semibold transition-colors"
                   >
-                    <Globe className="size-3.5 text-cyan-400" />
+                    <Globe className="size-3.5 text-[#5B35F5]" />
                     <span>Report on cybercrime.gov.in</span>
-                    <ExternalLink className="size-3 text-zinc-500" />
+                    <ExternalLink className="size-3 text-[#5E5A7A]" />
                   </a>
 
                   <a
                     href="tel:1930"
-                    className="inline-flex items-center gap-1.5 h-8 px-3 rounded border border-rose-800 bg-rose-950/60 hover:bg-rose-900 text-rose-200 text-xs font-medium transition-colors"
+                    className="inline-flex items-center gap-1.5 h-9 px-4 rounded-full border border-[#D64545]/30 bg-[#FDE8E6] text-[#B42318] text-xs font-bold transition-colors"
                   >
-                    <Phone className="size-3.5 text-rose-400" />
+                    <Phone className="size-3.5 text-[#D64545]" />
                     <span>Call 1930</span>
                   </a>
 
-                  <span className="text-[10px] text-zinc-500 ml-auto italic">
+                  <span className="text-[11px] text-[#5E5A7A] ml-auto italic">
                     Links only; nothing is sent.
                   </span>
                 </div>
@@ -624,8 +624,8 @@ export function SmsShieldPanel() {
         </div>
 
         {/* Mandatory Transparency Note Under Panel */}
-        <div className="pt-3 border-t border-zinc-900 text-center">
-          <p className="text-xs text-zinc-500 font-mono">
+        <div className="pt-3 border-t border-[#EEEAFB] text-center">
+          <p className="text-xs text-[#5E5A7A]">
             Rule-based checks, running on your device. No message leaves the browser.
           </p>
         </div>
@@ -647,4 +647,3 @@ export function SmsShieldPanel() {
     </div>
   )
 }
-

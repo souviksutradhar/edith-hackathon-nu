@@ -440,7 +440,7 @@ export function ScamTriageView({ onOpenDossier }: ScamTriageViewProps) {
 
     const firBundle = {
       portal: "National Cybercrime Reporting Portal (1930) / State Police",
-      reference: `FIR-1930-${Date.now()}`,
+      reference: `COMPLAINT-1930-${Date.now()}`,
       timestamp: new Date().toISOString(),
       accusedIdentifier: verdict.firDetails.accusedIdentifier,
       violationType: verdict.firDetails.violationType,
@@ -460,12 +460,12 @@ export function ScamTriageView({ onOpenDossier }: ScamTriageViewProps) {
       "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(firBundle, null, 2));
     const downloadAnchor = document.createElement("a");
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", `FIR-Dossier-1930-${Date.now()}.json`);
+    downloadAnchor.setAttribute("download", `Complaint-Draft-1930-${Date.now()}.json`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
 
-    toast.success("FIR Dossier downloaded (.JSON)", {
+    toast.success("Complaint draft downloaded (.JSON)", {
       description: "SHA-256 evidence chain attached for 1930 submission.",
     });
 
@@ -568,7 +568,7 @@ export function ScamTriageView({ onOpenDossier }: ScamTriageViewProps) {
         </div>
       )}
 
-      {/* ── ELEMENT C: Auto-Generated FIR File (Shows ONLY if Suspicious) ── */}
+      {/* ── ELEMENT C: Auto-Generated Complaint Draft File (Shows ONLY if Suspicious) ── */}
       {verdict && verdict.showFir && verdict.firDetails && (
         <div className="rounded-lg border border-rose-900/80 bg-zinc-950 p-5 space-y-4 font-mono">
           <div className="flex items-center justify-between border-b border-zinc-800 pb-2.5">
@@ -624,7 +624,7 @@ export function ScamTriageView({ onOpenDossier }: ScamTriageViewProps) {
             className="w-full sm:w-auto bg-rose-600 hover:bg-rose-500 text-white font-mono text-xs font-bold h-9 px-4 rounded"
           >
             <ArrowDownToLine className="mr-2 size-3.5" />
-            Download FIR Dossier (.JSON / .PDF)
+            Download Complaint Draft (.JSON / .PDF)
           </Button>
         </div>
       )}

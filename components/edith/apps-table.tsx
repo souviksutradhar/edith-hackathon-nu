@@ -20,9 +20,9 @@ import { cn } from "@/lib/utils"
 type Filter = "all" | "attention" | "healthy"
 
 function scoreTone(score: number) {
-  if (score >= 70) return { bar: "bg-success", text: "text-success", label: "Healthy" }
-  if (score >= 50) return { bar: "bg-warning", text: "text-warning", label: "Moderate" }
-  return { bar: "bg-danger", text: "text-danger", label: "At risk" }
+  if (score >= 70) return { bar: "bg-[#1E9E6A]", text: "text-[#12704A]", label: "Healthy" }
+  if (score >= 50) return { bar: "bg-[#D99A1E]", text: "text-[#8A5A00]", label: "Moderate" }
+  return { bar: "bg-[#D64545]", text: "text-[#B42318]", label: "At risk" }
 }
 
 function TrustBar({ score }: { score: number }) {
@@ -35,7 +35,7 @@ function TrustBar({ score }: { score: number }) {
         aria-valuemin={0}
         aria-valuemax={100}
         aria-label={`Trust score ${score} out of 100, ${tone.label}`}
-        className="h-2 flex-1 overflow-hidden rounded-full bg-muted"
+        className="h-2 flex-1 overflow-hidden rounded-full bg-[#E6E1FA]"
       >
         <div className={cn("h-full rounded-full transition-all", tone.bar)} style={{ width: `${score}%` }} />
       </div>
@@ -175,32 +175,32 @@ export function AppsTable({
   const isBusy = isSimulating || internalLoading
 
   return (
-    <Card className="border border-border bg-card shadow-lg">
-      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <Card className="rounded-[20px] border border-[#E6E1FA] bg-white shadow-none">
+      <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[#EEEAFB] pb-4">
         <div>
-          <CardTitle className="text-base">{title}</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-base font-bold text-[#15122B]">{title}</CardTitle>
+          <CardDescription className="text-xs text-[#5E5A7A]">
             Intent-Based Heuristic Evaluation: Declared Purpose vs Actual Permissions Granted &amp; Sideload Origins.
           </CardDescription>
         </div>
         <Tabs value={filter} onValueChange={(v) => setFilter(v as Filter)}>
-          <TabsList>
-            <TabsTrigger value="all">All ({effectiveApps.length})</TabsTrigger>
-            <TabsTrigger value="attention">Needs Attention</TabsTrigger>
-            <TabsTrigger value="healthy">Healthy Baseline</TabsTrigger>
+          <TabsList className="bg-[#F9F8FF] border border-[#E6E1FA] p-1 rounded-full">
+            <TabsTrigger value="all" className="rounded-full text-xs data-[state=active]:bg-[#5B35F5] data-[state=active]:text-white data-[state=active]:shadow-sm">All ({effectiveApps.length})</TabsTrigger>
+            <TabsTrigger value="attention" className="rounded-full text-xs data-[state=active]:bg-[#5B35F5] data-[state=active]:text-white data-[state=active]:shadow-sm">Needs Attention</TabsTrigger>
+            <TabsTrigger value="healthy" className="rounded-full text-xs data-[state=active]:bg-[#5B35F5] data-[state=active]:text-white data-[state=active]:shadow-sm">Healthy Baseline</TabsTrigger>
           </TabsList>
         </Tabs>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-4">
         {/* Apps Table */}
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
-              <TableHead>Application &amp; Source</TableHead>
-              <TableHead>Declared Purpose</TableHead>
-              <TableHead>Expected vs Granted Permissions</TableHead>
-              <TableHead>Trust Score</TableHead>
-              <TableHead className="text-right">
+            <TableRow className="hover:bg-transparent bg-[#F9F8FF] border-b border-[#EEEAFB]">
+              <TableHead className="font-semibold text-xs text-[#5E5A7A] uppercase">Application &amp; Source</TableHead>
+              <TableHead className="font-semibold text-xs text-[#5E5A7A] uppercase">Declared Purpose</TableHead>
+              <TableHead className="font-semibold text-xs text-[#5E5A7A] uppercase">Expected vs Granted Permissions</TableHead>
+              <TableHead className="font-semibold text-xs text-[#5E5A7A] uppercase">Trust Score</TableHead>
+              <TableHead className="text-right font-semibold text-xs text-[#5E5A7A] uppercase">
                 <span>Zero-Trust Action</span>
               </TableHead>
             </TableRow>
@@ -208,7 +208,7 @@ export function AppsTable({
           <TableBody>
             {visible.length === 0 && (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={5} className="py-10 text-center text-muted-foreground">
+                <TableCell colSpan={5} className="py-10 text-center text-[#5E5A7A] text-xs">
                   No applications match your filters.
                 </TableCell>
               </TableRow>
@@ -226,29 +226,29 @@ export function AppsTable({
                 <TableRow
                   key={app.id}
                   className={cn(
-                    "transition-colors hover:bg-accent/50",
-                    isFrozen && "bg-danger/10 hover:bg-danger/15",
-                    isWarning && "bg-warning/10 hover:bg-warning/15",
+                    "transition-colors hover:bg-[#F9F8FF]/80 h-[52px] border-b border-[#EEEAFB]",
+                    isFrozen && "bg-[#FDE8E6]/40 hover:bg-[#FDE8E6]/60",
+                    isWarning && "bg-[#FFF1D6]/40 hover:bg-[#FFF1D6]/60",
                   )}
                 >
                   {/* Application & Source */}
                   <TableCell>
                     <div>
-                      <div className="flex items-center gap-2 font-medium text-foreground">
+                      <div className="flex items-center gap-2 font-semibold text-[#15122B]">
                         <span>{app.name}</span>
                         {isFrozen && (
-                          <Badge className="border-danger text-danger bg-danger/15 font-mono text-[10px] uppercase font-bold">
+                          <Badge className="border-[#D64545]/30 text-[#B42318] bg-[#FDE8E6] font-mono text-[10px] uppercase font-bold rounded-full px-2 py-0.5">
                             <Lock className="size-2.5 mr-1" />
                             Frozen
                           </Badge>
                         )}
                         {isWarning && (
-                          <Badge className="border-warning text-warning bg-warning/15 font-mono text-[10px] uppercase font-bold">
+                          <Badge className="border-[#D99A1E]/30 text-[#8A5A00] bg-[#FFF1D6] font-mono text-[10px] uppercase font-bold rounded-full px-2 py-0.5">
                             Warning
                           </Badge>
                         )}
                         {app.status === "Active" && (
-                          <Badge className="border-success/40 text-success bg-success/10 font-mono text-[10px] uppercase">
+                          <Badge className="border-[#1E9E6A]/30 text-[#12704A] bg-[#E3F6EE] font-mono text-[10px] uppercase font-bold rounded-full px-2 py-0.5">
                             Active
                           </Badge>
                         )}
@@ -256,25 +256,25 @@ export function AppsTable({
 
                       <div className="mt-1 flex items-center gap-2 text-xs">
                         {isSideloaded ? (
-                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-danger">
+                          <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#B42318]">
                             <ShieldAlert className="size-3" />
                             {app.installSource || "WhatsApp Sideload"}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground">
-                            <ShieldCheck className="size-3 text-success" />
+                          <span className="inline-flex items-center gap-1 text-[11px] text-[#5E5A7A]">
+                            <ShieldCheck className="size-3 text-[#12704A]" />
                             {app.installSource || "Play Store"}
                           </span>
                         )}
                         {app.packageName && (
-                          <span className="text-[10px] text-muted-foreground font-mono hidden sm:inline">
+                          <span className="text-[10px] text-[#5E5A7A] font-mono hidden sm:inline">
                             &middot; {app.packageName}
                           </span>
                         )}
                       </div>
 
                       {app.alert && (
-                        <p className="mt-1.5 flex items-center gap-1 text-[11px] text-danger font-medium line-clamp-1">
+                        <p className="mt-1.5 flex items-center gap-1 text-[11px] text-[#B42318] font-medium line-clamp-1">
                           <AlertTriangle className="size-3 shrink-0" />
                           {app.alert}
                         </p>
@@ -284,7 +284,7 @@ export function AppsTable({
 
                   {/* Declared Purpose */}
                   <TableCell>
-                    <span className="text-xs font-medium text-foreground/90">
+                    <span className="text-xs font-medium text-[#15122B]">
                       {app.declaredPurpose || "Standard Mobile Utility"}
                     </span>
                   </TableCell>
@@ -294,7 +294,7 @@ export function AppsTable({
                     <div className="space-y-1.5 max-w-xs">
                       <div className="flex flex-wrap gap-1">
                         {actualPermissions.length === 0 ? (
-                          <span className="text-xs text-danger font-mono font-medium">All Permissions Revoked</span>
+                          <span className="text-xs text-[#B42318] font-mono font-medium">All Permissions Revoked</span>
                         ) : (
                           actualPermissions.map((perm) => {
                             const isMismatch = !expectedSet.has(perm) && isSideloaded
@@ -303,10 +303,10 @@ export function AppsTable({
                                 key={perm}
                                 variant={isMismatch ? "destructive" : "secondary"}
                                 className={cn(
-                                  "text-[11px] font-normal",
+                                  "text-[11px] font-normal rounded-full px-2 py-0.5",
                                   isMismatch
-                                    ? "bg-danger text-white font-semibold ring-1 ring-danger animate-pulse"
-                                    : "border border-border bg-muted/60 text-foreground/80"
+                                    ? "bg-[#FDE8E6] text-[#B42318] border border-[#D64545]/40 font-semibold animate-pulse"
+                                    : "border border-[#E6E1FA] bg-[#F9F8FF] text-[#15122B]"
                                 )}
                               >
                                 {isMismatch ? `⚠ Mismatch: ${perm}` : perm}
@@ -331,7 +331,7 @@ export function AppsTable({
                           variant="outline"
                           size="sm"
                           onClick={() => handleRestore(app)}
-                          className="border-success/40 text-success hover:bg-success/15 font-semibold text-xs"
+                          className="border-[#1E9E6A]/40 text-[#12704A] hover:bg-[#E3F6EE] font-semibold text-xs rounded-full h-[34px] px-3"
                         >
                           <Undo2 className="size-3.5 mr-1" />
                           Restore
@@ -341,13 +341,13 @@ export function AppsTable({
                           variant="outline"
                           size="sm"
                           onClick={() => handleQuarantine(app)}
-                          className="border-danger/40 text-danger hover:bg-danger/15 font-semibold text-xs"
+                          className="border-[#D64545]/40 text-[#B42318] hover:bg-[#FDE8E6] font-semibold text-xs rounded-full h-[34px] px-3"
                         >
                           <ShieldOff className="size-3.5 mr-1" />
                           Revoke / Freeze
                         </Button>
                       )}
-                      <Button variant="outline" size="sm" onClick={() => onManage(app)} className="text-xs">
+                      <Button variant="outline" size="sm" onClick={() => onManage(app)} className="text-xs rounded-full border-[#E6E1FA] bg-white hover:bg-[#F9F8FF] text-[#15122B] h-[34px] px-3">
                         Details
                       </Button>
                     </div>

@@ -16,6 +16,22 @@ export type CrimeCategory =
   | "job_investment"
   | "other_suspicious"
 
+export type ElementStatus = "shown" | "needs_facts" | "not_indicated"
+
+export interface SimplifiedElement {
+  id: string
+  label: string
+  sourceNote: string
+  status: ElementStatus
+  statusLabel: "Shown by this message" | "Needs your facts" | "Not indicated"
+}
+
+export interface SectionElementChecklist {
+  sectionId: string
+  sectionName: string
+  elements: SimplifiedElement[]
+}
+
 export interface LegalSectionMapping {
   category: CrimeCategory
   categoryTitle: string
@@ -211,6 +227,276 @@ export function classifyCrime(input: {
 }
 
 /**
+ * Redacts one-time passwords (OTPs) and PINs from text to protect user confidentiality
+ */
+export function redactOtpFromMessage(text: string): string {
+  if (!text) return ""
+  return text
+    // Replace numbers following OTP, PIN, code, password, verification
+    .replace(/(\b(?:otp|code|pin|password|verification|verify)\s*(?:is|:|-)?\s*)(\d{4,8})\b/gi, "$1[REDACTED OTP]")
+    // Replace numbers preceding "is your OTP", etc.
+    .replace(/\b(\d{4,8})(\s*(?:is your|is the)?\s*(?:otp|code|pin|verification\s*code)\b)/gi, "[REDACTED OTP]$2")
+    // Replace any standalone 6-digit number if message contains OTP/verification/banking keywords
+    .replace(/\b\d{6}\b/g, (match) => {
+      if (/(?:otp|pin|code|verify|verification|bank|rto|challan|cbi|police|aadhaar|pan)/i.test(text)) {
+        return "[REDACTED OTP]"
+      }
+      return match
+    })
+}
+
+/**
+ * Defangs a URL to prevent accidental clicks while preserving forensic domain structure
+ */
+export function defangUrl(url: string): string {
+  if (!url) return ""
+  return url
+    .replace(/^https?:\/\//i, (m) => (m.toLowerCase().startsWith("https") ? "hxxps://" : "hxxp://"))
+    .replace(/\./g, "[.]")
+}
+
+/**
+ * Extracts and defangs URLs found in free text
+ */
+export function extractAndDefangUrls(text: string): string[] {
+  if (!text) return []
+  const urlRegex = /(?:https?:\/\/|www\.)[^\s/$.?#].[^\s]*/gi
+  const matches = text.match(urlRegex) || []
+  return matches.map(defangUrl)
+}
+
+/**
+ * Maps internal crime category to plain-English Chakshu suspected category
+ */
+export function getChakshuCategory(category: CrimeCategory): string {
+  switch (category) {
+    case "apk_malware":
+      return "Malicious App / APK Dropper"
+    case "govt_impersonation":
+      return "Impersonation of Government / Police Official"
+    case "phishing_kyc":
+      return "Fake Bank / KYC Suspension"
+    case "extortion":
+      return "Blackmail & Cyber Extortion"
+    case "job_investment":
+      return "Fake Job / Investment Scheme"
+    case "other_suspicious":
+    default:
+      return "Suspicious / Unsolicited Fraudulent Message"
+  }
+}
+
+/**
+ * Generates 2 factual sentences from templates for Chakshu Short Description
+ */
+export function getChakshuShortDescription(category: CrimeCategory): string {
+  switch (category) {
+    case "apk_malware":
+      return "Received an unsolicited message with an external link attempting to install an unauthorized APK. The application seeks high-privilege permissions to intercept device notifications and messages."
+    case "govt_impersonation":
+      return "Received an unsolicited message threatening legal action and arrest by falsely claiming to represent police or government authorities. The sender demands immediate payment or verification through an unauthorized link."
+    case "phishing_kyc":
+      return "Received a deceptive message claiming my bank account or KYC verification is suspended. The sender provides an unauthorized lookalike link to harvest confidential banking credentials."
+    case "extortion":
+      return "Received a coercive message threatening harm or unauthorized release of personal data unless money is transferred. No funds were transferred and no response was provided."
+    case "job_investment":
+      return "Received an unsolicited message offering unrealistic part-time earnings or investment returns. The sender asks for advance deposits through an unverified link."
+    case "other_suspicious":
+    default:
+      return "Received an unsolicited fraudulent message from an unregistered sender containing suspicious links. No money was lost and no credentials were shared."
+  }
+}
+
+/**
+ * Generates the simplified legal elements checklist for the 6 mandatory statutory sections
+ */
+export function getLegalElementsChecklist(
+  data: ComplaintDataInput,
+  category: CrimeCategory
+): SectionElementChecklist[] {
+  const text = (data.message + " " + data.sender).toLowerCase()
+
+  // Heuristic indicator checks
+  const isGovtOrPolice =
+    category === "govt_impersonation" ||
+    text.includes("police") ||
+    text.includes("cbi") ||
+    text.includes("court") ||
+    text.includes("customs") ||
+    text.includes("arrest") ||
+    text.includes("rto") ||
+    text.includes("echallan") ||
+    text.includes("parivahan") ||
+    text.includes("electricity") ||
+    text.includes("tsecl") ||
+    text.includes("warrant") ||
+    text.includes("officer")
+
+  const isBrandOrOrg =
+    isGovtOrPolice ||
+    category === "phishing_kyc" ||
+    category === "apk_malware" ||
+    text.includes("sbi") ||
+    text.includes("hdfc") ||
+    text.includes("icici") ||
+    text.includes("bank") ||
+    text.includes("telecom") ||
+    text.includes("jio") ||
+    text.includes("airtel") ||
+    text.includes("challan")
+
+  const isCoerciveOrFear =
+    category === "extortion" ||
+    text.includes("arrest") ||
+    text.includes("warrant") ||
+    text.includes("leak") ||
+    text.includes("police") ||
+    text.includes("court") ||
+    text.includes("disconnect") ||
+    text.includes("power cut") ||
+    text.includes("legal action") ||
+    text.includes("seize")
+
+  const isIdentityShared = data.installedApp === "Yes" || data.lostMoney
+
+  return [
+    {
+      sectionId: "bns-318-4",
+      sectionName: "BNS 318(4) Cheating",
+      elements: [
+        {
+          id: "deception",
+          label: "Deception",
+          sourceNote: "from message",
+          status: "shown",
+          statusLabel: "Shown by this message",
+        },
+        {
+          id: "dishonest_inducement",
+          label: "Dishonestly inducing the person",
+          sourceNote: "from message",
+          status: "shown",
+          statusLabel: "Shown by this message",
+        },
+        {
+          id: "delivery_property",
+          label: "Delivery of property or money",
+          sourceNote: 'needs victim facts, set by "lost money"',
+          status: data.lostMoney ? "needs_facts" : "not_indicated",
+          statusLabel: data.lostMoney ? "Needs your facts" : "Not indicated",
+        },
+      ],
+    },
+    {
+      sectionId: "bns-319-2",
+      sectionName: "BNS 319(2) Cheating by personation",
+      elements: [
+        {
+          id: "pretends_person_org",
+          label: "Pretends to be another person or organisation",
+          sourceNote: "from message",
+          status: isBrandOrOrg ? "shown" : "not_indicated",
+          statusLabel: isBrandOrOrg ? "Shown by this message" : "Not indicated",
+        },
+        {
+          id: "cheating_as_above",
+          label: "Cheating as above",
+          sourceNote: "cheating as above",
+          status: isBrandOrOrg ? "shown" : "not_indicated",
+          statusLabel: isBrandOrOrg ? "Shown by this message" : "Not indicated",
+        },
+      ],
+    },
+    {
+      sectionId: "bns-204",
+      sectionName: "BNS 204 Personating a public servant",
+      elements: [
+        {
+          id: "claims_public_servant",
+          label: "Claims to hold a government or police office",
+          sourceNote: "from message",
+          status: isGovtOrPolice ? "shown" : "not_indicated",
+          statusLabel: isGovtOrPolice ? "Shown by this message" : "Not indicated",
+        },
+      ],
+    },
+    {
+      sectionId: "it-act-66d",
+      sectionName: "IT Act 66D",
+      elements: [
+        {
+          id: "cheating_personation_device",
+          label: "Cheating by personation",
+          sourceNote: "from message",
+          status: isBrandOrOrg ? "shown" : "not_indicated",
+          statusLabel: isBrandOrOrg ? "Shown by this message" : "Not indicated",
+        },
+        {
+          id: "communication_device",
+          label: "By means of a communication device or computer resource",
+          sourceNote: "yes, SMS/WhatsApp/app",
+          status: "shown",
+          statusLabel: "Shown by this message",
+        },
+      ],
+    },
+    {
+      sectionId: "it-act-66c",
+      sectionName: "IT Act 66C Identity theft",
+      elements: [
+        {
+          id: "identity_theft_creds",
+          label: "Fraudulent use of someone else's password, OTP or unique ID",
+          sourceNote: "needs victim facts: only if they shared it",
+          status: isIdentityShared ? "needs_facts" : "not_indicated",
+          statusLabel: isIdentityShared ? "Needs your facts" : "Not indicated",
+        },
+      ],
+    },
+    {
+      sectionId: "bns-308-2",
+      sectionName: "BNS 308(2) Extortion",
+      elements: [
+        {
+          id: "puts_in_fear",
+          label: "Puts the person in fear",
+          sourceNote: "from message",
+          status: isCoerciveOrFear ? "shown" : "not_indicated",
+          statusLabel: isCoerciveOrFear ? "Shown by this message" : "Not indicated",
+        },
+        {
+          id: "induces_delivery_fear",
+          label: "Dishonestly induces delivery of money or property",
+          sourceNote: "needs victim facts",
+          status: isCoerciveOrFear && data.lostMoney ? "needs_facts" : "not_indicated",
+          statusLabel: isCoerciveOrFear && data.lostMoney ? "Needs your facts" : "Not indicated",
+        },
+      ],
+    },
+  ]
+}
+
+/**
+ * Formats the elements checklist for inclusion in the plain text complaint draft
+ */
+export function formatElementsChecklistPlainText(checklists: SectionElementChecklist[]): string {
+  return checklists
+    .map((sec) => {
+      const lines = sec.elements.map((el) => {
+        const mark =
+          el.status === "shown"
+            ? "[✓ Shown by this message]"
+            : el.status === "needs_facts"
+            ? "[• Needs your facts]"
+            : "[- Not indicated]"
+        return `  ${mark} ${el.label} [${el.sourceNote}]`
+      })
+      return `• ${sec.sectionName}:\n${lines.join("\n")}`
+    })
+    .join("\n\n")
+}
+
+/**
  * Computes browser SHA-256 hash using crypto.subtle
  */
 export async function computeClientSha256(text: string): Promise<string> {
@@ -235,6 +521,9 @@ export function generatePlainTextComplaint(
   data: ComplaintDataInput,
   mapping: LegalSectionMapping
 ): string {
+  const checklists = getLegalElementsChecklist(data, mapping.category)
+  const checklistText = formatElementsChecklistPlainText(checklists)
+
   const lossSection = data.lostMoney
     ? `
 SECTION 6: FINANCIAL LOSS PARTICULARS
@@ -264,8 +553,8 @@ Crime Category  : ${mapping.categoryTitle}
 Forensic Seal   : SHA-256 [${data.evidenceHash}]
 
 IMPORTANT NOTICE:
-This document is an auto-generated draft prepared from deterministic rule-based
-checks on the complainant's device. It is NOT a First Information Report (FIR).
+This document is an auto-generated Complaint draft prepared from deterministic rule-based
+checks on the complainant's device. It is an indicative document.
 Law enforcement authorities decide the applicable statutory sections and procedure.
 
 --------------------------------------------------------------------------------
@@ -307,13 +596,9 @@ ${
 Total Risk Score        : ${data.totalScore} / 100
 
 --------------------------------------------------------------------------------
-SECTION 5: SECTIONS POLICE MAY CONSIDER (Indicative, not legal advice)
+SECTION 5: LAWS THAT MAY APPLY (Simplified and indicative. Police decide.)
 --------------------------------------------------------------------------------
-Bharatiya Nyaya Sanhita (BNS) 2023:
-${mapping.bnsSections.map((s) => `• ${s}`).join("\n")}
-
-Information Technology Act 2000 (as amended):
-${mapping.itActSections.map((s) => `• ${s}`).join("\n")}
+${checklistText}
 
 ${lossSection}
 --------------------------------------------------------------------------------
@@ -336,8 +621,8 @@ screenshots and communication records for forensic presentation.
 Signature of Complainant : _________________________________________
 Date & Place             : _________________________________________
 ================================================================================
-Auto-generated draft from rule-based checks. Not legal advice. Police decide
-the applicable sections. Nothing leaves your browser.
+Auto-generated Complaint draft from rule-based checks. Not legal advice.
+Police decide the applicable sections. Nothing leaves your browser.
 ================================================================================`
 }
 
